@@ -23,7 +23,7 @@
     "@upstash/redis": "^1.38.0",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.17.0",
-    "next": "16.3.8",
+    "next": "16.4.2",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "resend": "^6.12.2"
@@ -34,7 +34,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.8",
+    "eslint-config-next": "16.4.2",
     "jiti": "^2.6.1",
     "playwright": "1.60.0",
     "tailwindcss": "^4",
