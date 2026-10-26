@@ -43,7 +43,7 @@ import { CONTACT_EMAIL } from "@/lib/contacts";
 import { submitWithoutReset } from "@/components/ui/form/submit";
 import { useFocusAfterFailure } from "@/components/ui/form/focus-after-failure";
 import { COUNTRIES, isServedCountry } from "@/data/countries";
-import { SECTORS } from "@edidi-hq/core/sectors";
+import { SECTOR_OPTIONS } from "@edidi-hq/core/sectors";
 import { TRIAL_STEPS_DONE, TrialStepper } from "./stepper";
 import { LEAD_MARKET } from "@/lib/market";
 import { TrialTimeline } from "./timeline";
@@ -138,9 +138,6 @@ const hintStyle: React.CSSProperties = {
 
 /** The fields that live on step 1 of the form. */
 const STEP_ONE_FIELDS = ["role", "orgSize", "sector", "country"] as const;
-
-/** Core's industry list — the one the app validates a trial's industry against. */
-const SECTOR_OPTIONS = SECTORS.map((sector) => ({ value: sector, label: sector }));
 
 function SubmitButton({ isValid, pending }: { isValid: boolean; pending: boolean }) {
   const disabled = pending || !isValid;
