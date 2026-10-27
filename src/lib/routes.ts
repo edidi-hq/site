@@ -23,3 +23,12 @@ export const SITE_ROUTES = {
 } as const;
 
 export type SiteRouteKey = keyof typeof SITE_ROUTES;
+
+/**
+ * The site's own endpoints, which the browser calls from a pre-built page.
+ * Not pages: never in the sitemap or the navigation.
+ */
+export const SITE_API_ROUTES = {
+  /** The visitor's country from their IP (Vercel's header), for starting choices. */
+  visitorCountry: "/api/visitor-country",
+} as const;

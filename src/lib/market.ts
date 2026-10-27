@@ -1,3 +1,4 @@
+import { INTERNATIONAL_PRICE_CURRENCY } from "@edidi-hq/core/billing/catalog";
 import { COUNTRY_PROFILES, type CountryCode } from "@edidi-hq/core/region/countries";
 
 /**
@@ -15,6 +16,21 @@ export const LEAD_MARKET: CountryCode = "NG";
 
 /** The lead market's currency — the price list opens in it, the estimator counts in it. */
 export const LEAD_CURRENCY = COUNTRY_PROFILES[LEAD_MARKET].defaultCurrency;
+
+/**
+ * The currency a price list opens in — a starting point, the visitor can switch:
+ *   1. the visitor's country's currency (core's profile), when the list offers it;
+ *   2. for a visitor from anywhere else, core's international price currency, when offered;
+ *   3. the lead currency (also for a visitor we cannot place), else the list's first.
+ */
+export function startingCurrency(visitorCountry: string | null, offered: readonly string[]): string {
+  const profile = visitorCountry ? COUNTRY_PROFILES[visitorCountry as CountryCode] : undefined;
+  if (profile && offered.includes(profile.defaultCurrency)) return profile.defaultCurrency;
+  if (visitorCountry && offered.includes(INTERNATIONAL_PRICE_CURRENCY)) {
+    return INTERNATIONAL_PRICE_CURRENCY;
+  }
+  return offered.includes(LEAD_CURRENCY) ? LEAD_CURRENCY : (offered[0] ?? LEAD_CURRENCY);
+}
 
 const LEAD_MARKET_NAME = new Intl.DisplayNames(["en-GB"], { type: "region" }).of(LEAD_MARKET) ?? LEAD_MARKET;
 

@@ -21,7 +21,8 @@ import { formatEnglishList } from "@/lib/english-list";
 import { ANNUAL_BILLED_MONTHS, PLAN_CATALOG, PLAN_ORDER } from "@edidi-hq/core/billing/catalog";
 import { READ_ONLY_GRACE_DAYS, TRIAL_DURATION_DAYS, TRIAL_PLAN, TRIAL_PLAN_NAME, TRIAL_SEAT_CAP, TRIAL_STORAGE, NO_CARD_REQUIRED } from "@/lib/trial-terms";
 import { contactHref } from "@/app/contact/tabs";
-import { LEAD_CURRENCY } from "@/lib/market";
+import { LEAD_CURRENCY, startingCurrency } from "@/lib/market";
+import { useVisitorCountry } from "@/lib/hooks/use-visitor-country";
 import { SITE_ROUTES } from "@/lib/routes";
 import { Z_INDEX } from "@/lib/layers";
 import { cardGridProps } from "@/lib/card-grid";
@@ -91,10 +92,12 @@ export function Pricing({ data, headingAs = "h2" }: PricingProps) {
   const [billing, setBilling] = useState<BillingCycle>("annual");
 
   const currencies = getAvailableCurrencies(data);
-  // Nigeria-first market — lead with Naira; fall back to whatever the API offers.
-  const [currency, setCurrency] = useState<string>(
-    currencies.includes(LEAD_CURRENCY) ? LEAD_CURRENCY : currencies[0],
-  );
+  // Opens in the lead currency (the page is pre-built), then in the visitor's
+  // own once the site says where they are — unless they have already chosen.
+  // Asked only when there is a currency to choose between.
+  const visitorCountry = useVisitorCountry(currencies.length > 1);
+  const [chosenCurrency, setChosenCurrency] = useState<string | null>(null);
+  const currency = chosenCurrency ?? startingCurrency(visitorCountry, currencies);
 
   // Contrast / anchoring: render plans in ascending price so the premium tier
   // (Enterprise) sits to the right of the featured plan and anchors it — the
@@ -280,7 +283,7 @@ export function Pricing({ data, headingAs = "h2" }: PricingProps) {
                 <button
                   key={c}
                   type="button"
-                  onClick={() => setCurrency(c)}
+                  onClick={() => setChosenCurrency(c)}
                   style={{
                     padding: "8px 16px",
                     borderRadius: "var(--radius-md)",

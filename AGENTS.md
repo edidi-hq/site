@@ -11,7 +11,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 The public marketing site for the brand (`BRAND.name`, on core's `SITE_HOST`) — a single
 Next.js 16 App Router service on Vercel. Brand identity comes from a private shared package,
 pricing comes from the platform API (`BRAND.appUrl`), and the only server code is four
-Server Actions.
+Server Actions and one read-only endpoint (`SITE_API_ROUTES.visitorCountry`, the visitor's IP
+country for a pre-built page's starting choice).
 
 ## Architecture questions → invoke `repo-map`
 
