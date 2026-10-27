@@ -54,6 +54,12 @@ const SECTIONS: LegalSection[] = [
           recorded primarily to power the tamper-evident audit trail and to secure the service.
         </p>
         <p>
+          <strong>Approximate location.</strong>{" "}The country, and where available the region, our hosting provider
+          derives from your IP address. We use it to start forms and price lists on your country and currency, and,
+          when you ask for a free trial, to check the request against sanctions rules. It is not stored on its own;
+          a trial request keeps only the outcome of that check.
+        </p>
+        <p>
           <strong>Support correspondence.</strong>{" "}Messages, phone numbers (if shared), and any information you
           voluntarily include when contacting us.
         </p>
@@ -353,7 +359,7 @@ export default function PrivacyPage() {
       eyebrow="PRIVACY POLICY"
       title="How we handle your data."
       lede={`This policy is a plain-language summary of how ${BRAND.name} collects, uses, and protects personal data. It is designed to be read by a person, not skimmed for keywords.`}
-      effectiveDate="16 October 2026"
+      effectiveDate="26 October 2026"
       sections={SECTIONS}
       footerNote={
         <>

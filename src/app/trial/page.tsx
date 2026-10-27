@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { TrialForm } from "./trial-form";
+import { startingCountry } from "@/data/countries";
+import { visitorCountry } from "@/lib/visitor";
 import { pageMetadata } from "@/lib/seo";
 import { TRIAL_LENGTH, TRIAL_PLAN_NAME, TRIAL_SEAT_CAP, NO_CARD_REQUIRED, TRIAL_SETUP_TIME } from "@/lib/trial-terms";
 import { SITE_PAGES, BRAND } from "@/lib/brand";
@@ -15,7 +17,9 @@ export const metadata: Metadata = pageMetadata({
   socialDescription: `Provision ${TRIAL_SETUP_TIME}. Full ${TRIAL_PLAN_NAME} features on a ${TRIAL_SEAT_CAP}-seat pilot workspace. Your organisation's data, not a demo.`,
 });
 
-export default function TrialPage() {
+export default async function TrialPage() {
+  // Built per visit: the form starts on the visitor's own country.
+  const initialCountry = startingCountry(await visitorCountry());
   return (
     <>
       <Navbar />
@@ -31,7 +35,7 @@ export default function TrialPage() {
         }}
       >
         <div style={{ maxWidth: "var(--layout-max-width)", margin: "0 auto", position: "relative", zIndex: Z_INDEX.raised }}>
-          <TrialForm />
+          <TrialForm initialCountry={initialCountry} />
         </div>
       </main>
       <Footer />

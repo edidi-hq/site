@@ -12,6 +12,8 @@
 import { COUNTRY_CODES } from "@edidi-hq/core/region/countries";
 import { ISO_3166_ALPHA2 } from "@edidi-hq/core/region/iso-3166";
 
+import { LEAD_MARKET } from "@/lib/market";
+
 /** Every assigned ISO 3166-1 alpha-2 code plus XK — core's list, the one the app's API validates against. */
 const ISO_3166_ALPHA2_CODES = [...ISO_3166_ALPHA2].sort();
 
@@ -45,6 +47,15 @@ const SELECTABLE = new Set<string>(ISO_3166_ALPHA2_CODES);
 /** Whether `code` (upper-case alpha-2) is one the form offers — the server action's check. */
 export function isSelectableCountry(code: string): boolean {
   return SELECTABLE.has(code);
+}
+
+/**
+ * The country a form starts on: where the visitor is (Vercel's IP country, read
+ * on the server) when the form offers it, else the lead market. A starting
+ * point only — the visitor can choose any country.
+ */
+export function startingCountry(visitorCountry: string | null): string {
+  return visitorCountry && isSelectableCountry(visitorCountry) ? visitorCountry : LEAD_MARKET;
 }
 
 /** Whether the platform sets `code` up on its own (vs. a request its team completes). */

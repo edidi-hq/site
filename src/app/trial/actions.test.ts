@@ -12,6 +12,10 @@ vi.mock("@/lib/rate-limit", () => ({
   RATE_LIMIT_UNAVAILABLE_MESSAGE: "This form is temporarily unavailable.",
 }));
 vi.mock("@/lib/turnstile", () => ({ verifyTurnstile: async () => ({ ok: true, skipped: true }) }));
+// What the site forwards for the visitor (their origin and its identity) —
+// visitor.ts reads the request's headers, which a test has none of.
+const VISITOR_HEADERS = { "x-visitor-country": "GH", authorization: "Bearer site-identity" };
+vi.mock("@/lib/visitor", () => ({ onBehalfOfVisitorHeaders: async () => VISITOR_HEADERS }));
 
 import { submitTrialRequest } from "./actions";
 import { INITIAL_STATE } from "./state";
@@ -59,6 +63,12 @@ describe("submitTrialRequest (the server path, with or without JavaScript)", () 
       consent: true,
     });
     expect("values" in state).toBe(false);
+  });
+
+  it("sends the visitor's origin with the request, so the app screens the visitor, not this site", async () => {
+    await submitTrialRequest(INITIAL_STATE, posted());
+    const sent = Object.fromEntries(new Headers(platform.mock.calls[0]![1].headers));
+    expect(sent).toMatchObject({ "content-type": "application/json", ...VISITOR_HEADERS });
   });
 
   it("hands back what was posted with a refusal, so a page without JavaScript keeps it", async () => {
