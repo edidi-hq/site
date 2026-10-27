@@ -1,9 +1,9 @@
 import "server-only";
 import { headers } from "next/headers";
-import type { Ratelimit } from "@upstash/ratelimit";
 import {
   checkRateLimit,
   makeLimiter,
+  type Limiter,
   type RateLimitVerdict,
 } from "@edidi-hq/core/security/rate-limit";
 import type { RateLimitTierKey } from "@edidi-hq/core/security/rate-limit-tiers";
@@ -69,10 +69,10 @@ export const RATE_LIMIT_UNAVAILABLE_MESSAGE =
   "This form is temporarily unavailable. Please try again in a few minutes.";
 
 // Built once per action; null when the shared store is not configured.
-const limiters = new Map<SiteRateLimitedAction, Ratelimit | null>();
+const limiters = new Map<SiteRateLimitedAction, Limiter | null>();
 
 /** The limiter an action runs on — exported so tests can read its tier. */
-export function limiterFor(action: SiteRateLimitedAction): Ratelimit | null {
+export function limiterFor(action: SiteRateLimitedAction): Limiter | null {
   if (!limiters.has(action)) {
     const { requests, windowSeconds, tier } = SITE_RATE_LIMITS[action];
     limiters.set(action, makeLimiter(requests, windowSeconds, tier));

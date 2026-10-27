@@ -13,7 +13,7 @@ import { dirname, join } from "node:path";
  *   - `region/countries` — type-only imports, no peers.
  *   - `security/rate-limit` and `security/rate-limit-tiers` — the shared
  *     limiter for the four Server Actions. Their import graph needs only
- *     `@upstash/ratelimit` and `@upstash/redis`, which the site installs.
+ *     `@upstash/redis`, which the site installs.
  *     Admitted module by module, not as `security/*`: the rest of that folder
  *     pulls in peers the site does not carry.
  *   - `billing/trial-deadlines`, `billing/capacity`, `billing/catalog` and
@@ -216,7 +216,7 @@ function packagesReachedFrom(entry: string): string[] {
 
 describe("every allowed core subpath reaches only packages the site installs", () => {
   it("the walk sees a known package import (proves it reads value imports)", () => {
-    expect(packagesReachedFrom(coreEntryFile("security/rate-limit"))).toContain("@upstash/ratelimit");
+    expect(packagesReachedFrom(coreEntryFile("security/rate-limit"))).toContain("@upstash/redis");
   });
 
   it("the walk skips type-only imports (they are erased at build)", () => {

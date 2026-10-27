@@ -48,7 +48,6 @@ describe("site rate limits", () => {
     vi.stubEnv("UPSTASH_REDIS_REST_URL", "https://rate-limit.test.invalid");
     vi.stubEnv("UPSTASH_REDIS_REST_TOKEN", "test-token");
     const { SITE_RATE_LIMITS, limiterFor } = await loadSeam();
-    const { limiterTier } = await import("@edidi-hq/core/security/rate-limit");
 
     const expected = {
       contact: "site_contact",
@@ -59,7 +58,7 @@ describe("site rate limits", () => {
     for (const action of ACTIONS) {
       const limiter = limiterFor(action);
       expect(limiter, action).not.toBeNull();
-      expect(limiterTier(limiter!), action).toBe(expected[action]);
+      expect(limiter!.tier, action).toBe(expected[action]);
       expect(SITE_RATE_LIMITS[action].tier).toBe(expected[action]);
       expect(RATE_LIMIT_TIERS[expected[action]].surface).toBe("site");
     }
