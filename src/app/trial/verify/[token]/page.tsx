@@ -5,7 +5,7 @@ import { VerifyConfirm, VerifyResult } from "./client";
 import { TRIAL_STEPS_DONE, TrialStepper } from "../../stepper";
 import { BRAND } from "@/lib/brand";
 import { exceedsLimit } from "@/lib/form-rules";
-import { VERIFY_FAILED_MESSAGE } from "./state";
+import { VERIFY_INCOMPLETE_MESSAGE } from "./state";
 import { Z_INDEX } from "@/lib/layers";
 
 export const metadata: Metadata = {
@@ -47,7 +47,7 @@ export default async function VerifyPage({ params }: PageProps) {
           {plausible ? (
             <VerifyConfirm token={token} />
           ) : (
-            <VerifyResult status="not_found" message={VERIFY_FAILED_MESSAGE} token={token} />
+            <VerifyResult status="not_found" message={VERIFY_INCOMPLETE_MESSAGE} token={token} />
           )}
         </div>
       </main>

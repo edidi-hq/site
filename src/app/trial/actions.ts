@@ -40,7 +40,7 @@ import { CONTACT_EMAIL } from "@/lib/contacts";
 import { exceedsLimit, FORM_MESSAGES, tooLongMessage, withinLimit } from "@/lib/form-rules";
 import { onBehalfOfVisitorHeaders } from "@/lib/visitor";
 import { trialEmailError } from "./email-check";
-import { VERIFY_FAILED_MESSAGE, type VerifyState } from "./verify/[token]/state";
+import { VERIFY_INCOMPLETE_MESSAGE, VERIFY_RETRY_MESSAGE, type VerifyState } from "./verify/[token]/state";
 
 export async function submitTrialRequest(
   _previous: TrialFormState,
@@ -219,7 +219,7 @@ export async function confirmTrialVerification(
   const token = String(formData.get("token") ?? "").trim();
   // Guard against absurd token input before forwarding to the platform.
   if (!token || exceedsLimit(token, "token")) {
-    return { status: "not_found", message: VERIFY_FAILED_MESSAGE };
+    return { status: "not_found", message: VERIFY_INCOMPLETE_MESSAGE };
   }
 
   let response: Response;
@@ -234,8 +234,8 @@ export async function confirmTrialVerification(
     });
     payload = (await response.json().catch(() => ({}))) as VerifyResponse;
   } catch {
-    // Network failure or timeout — the error card.
-    return { status: "error", message: VERIFY_FAILED_MESSAGE };
+    // Network failure or timeout (platformFetch logs which) — the retry card.
+    return { status: "error", message: VERIFY_RETRY_MESSAGE };
   }
 
   // Success — the platform has provisioned (or found an existing) tenant.
@@ -255,12 +255,25 @@ export async function confirmTrialVerification(
     if (target && target.origin === appOrigin) {
       redirect(target.toString());
     }
-    // Untrusted or malformed target — fall through to the error card.
-    return { status: "error", message: VERIFY_FAILED_MESSAGE };
+    // Untrusted or malformed target — never followed. Logged by origin only:
+    // the invite path carries a token.
+    console.error("Trial verify: the invite link is not on the platform origin:", {
+      origin: target?.origin ?? "unparseable",
+    });
+    return { status: "error", message: VERIFY_RETRY_MESSAGE };
   }
 
+  // A refusal the card can show. A "provisioned" answer that reached here had
+  // no link to follow, and its message is a success line, so neither is one.
+  const refusal = payload.status !== "provisioned" ? payload.message : undefined;
+  if (!refusal) {
+    console.warn("Trial verify: the platform answered without a usable reason:", {
+      status: response.status,
+      answer: payload.status ?? "none",
+    });
+  }
   return {
     status: payload.status && payload.status !== "provisioned" ? payload.status : "error",
-    message: payload.message ?? VERIFY_FAILED_MESSAGE,
+    message: refusal ?? VERIFY_RETRY_MESSAGE,
   };
 }

@@ -6,17 +6,22 @@ import { platformFetch } from "@/lib/platform-fetch";
 const BYPASS_HEADER = "x-vercel-protection-bypass";
 const platform = vi.fn();
 
+function jsonResponse(status: number): Response {
+  return new Response("{}", { status, headers: { "content-type": "application/json; charset=utf-8" } });
+}
+
 function sentHeaders(): Headers {
   return platform.mock.calls[0]![1].headers as Headers;
 }
 
 beforeEach(() => {
-  platform.mockReset().mockResolvedValue(new Response("{}"));
+  platform.mockReset().mockResolvedValue(jsonResponse(200));
   vi.stubGlobal("fetch", platform);
 });
 
 afterEach(() => {
   vi.unstubAllEnvs();
+  vi.restoreAllMocks();
 });
 
 describe("platformFetch", () => {
@@ -39,6 +44,41 @@ describe("platformFetch", () => {
     vi.stubEnv("VERCEL_ENV", "production");
     await platformFetch("/api/v1/public/trial/request", { method: "POST" });
     expect(sentHeaders().has(BYPASS_HEADER)).toBe(false);
+  });
+});
+
+describe("platformFetch logging", () => {
+  const PATH = "/api/v1/public/trial/verify";
+
+  it("stays quiet for JSON answers, refusals included", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    platform.mockResolvedValueOnce(jsonResponse(200)).mockResolvedValueOnce(jsonResponse(404));
+    await platformFetch(PATH, { method: "POST" });
+    await platformFetch(PATH, { method: "POST" });
+    expect(warn).not.toHaveBeenCalled();
+    expect(error).not.toHaveBeenCalled();
+  });
+
+  it("logs a reply the caller cannot read: not JSON, or a 5xx", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    platform
+      .mockResolvedValueOnce(new Response("<html>", { status: 504, headers: { "content-type": "text/html" } }))
+      .mockResolvedValueOnce(jsonResponse(500));
+    await platformFetch(PATH, { method: "POST", body: JSON.stringify({ token: "secret-token" }) });
+    await platformFetch(PATH, { method: "POST" });
+    expect(warn).toHaveBeenCalledTimes(2);
+    expect(warn.mock.calls[0]![1]).toMatchObject({ path: PATH, status: 504, contentType: "text/html" });
+    expect(warn.mock.calls[1]![1]).toMatchObject({ status: 500, contentType: "application/json" });
+    expect(JSON.stringify(warn.mock.calls)).not.toContain("secret-token");
+  });
+
+  it("logs a failed call by error name and rethrows it", async () => {
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    platform.mockRejectedValueOnce(new DOMException("The operation timed out.", "TimeoutError"));
+    await expect(platformFetch(PATH, { method: "POST" })).rejects.toThrow("timed out");
+    expect(error.mock.calls[0]![1]).toMatchObject({ path: PATH, error: expect.stringMatching(/^TimeoutError/) });
+    expect(typeof (error.mock.calls[0]![1] as { elapsedMs: unknown }).elapsedMs).toBe("number");
   });
 });
 
