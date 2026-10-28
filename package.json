@@ -18,7 +18,8 @@
     "generate:brand-tokens": "vitest run src/lib/brand-tokens.lock.test.ts -u"
   },
   "dependencies": {
-    "@edidi-hq/core": "github:edidi-hq/core#0c85f291a30659fae8e40244e068e5434f5192d5",
+    "@edidi-hq/core": "github:edidi-hq/core#v0.297.0",
+    "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.17.0",
