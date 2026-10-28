@@ -18,7 +18,7 @@
     "generate:brand-tokens": "vitest run src/lib/brand-tokens.lock.test.ts -u"
   },
   "dependencies": {
-    "@edidi-hq/core": "github:edidi-hq/core#v0.298.0",
+    "@edidi-hq/core": "github:edidi-hq/core#9e181bdc85b6feabc32351718f1c38888bb8bfc2",
     "@upstash/redis": "^1.38.0",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.17.0",
@@ -53,31 +53,32 @@
       "brace-expansion@>=2.0.0 <3.0.0": ">=2.1.7 <3.0.0",
       "brace-expansion@>=3.0.0": ">=5.0.12",
       "socket.io-parser": ">=4.2.7 <5",
-      "ip-address": ">=10.5.1",
+      "ip-address": ">=10.7.4",
       "nanoid@<4": ">=3.3.18 <4",
       "protobufjs": ">=8.6.6",
       "fast-xml-parser": ">=5.7.0",
       "fast-xml-builder": ">=1.1.7",
-      "fast-uri": ">=3.1.8 <4",
+      "fast-uri": ">=3.1.9 <4",
       "hono": ">=4.13.11",
       "@hono/node-server": ">=2.0.5",
       "js-yaml@<5": ">=4.3.2 <5",
       "js-yaml@>=5": ">=5.2.0",
       "browserslist": ">=4.28.7",
       "baseline-browser-mapping": ">=2.11.0",
-      "qs": ">=6.16.0",
+      "qs": ">=6.16.1",
       "@humanfs/node": ">=0.16.8",
       "engine.io": ">=6.6.10",
-      "body-parser": ">=2.3.0",
+      "body-parser": ">=2.4.0",
       "@opentelemetry/core": ">=2.8.0",
-      "postcss": ">=8.5.18",
+      "postcss": ">=8.5.23",
       "uuid": ">=14.0.0",
       "ws": ">=8.21.0",
       "tmp": ">=0.2.6",
       "sharp": ">=0.35.5",
       "source-map-js": ">=1.2.2",
       "proxy-addr": ">=2.0.8",
-      "@babel/core": "^8.0.1"
+      "@babel/core": "^8.0.1",
+      "zod@>=4": ">=4.6.6"
     }
   }
 }

@@ -16,24 +16,24 @@ overrides:
   brace-expansion@>=2.0.0 <3.0.0: '>=2.1.7 <3.0.0'
   brace-expansion@>=3.0.0: '>=5.0.12'
   socket.io-parser: '>=4.2.7 <5'
-  ip-address: '>=10.5.1'
+  ip-address: '>=10.7.4'
   nanoid@<4: '>=3.3.18 <4'
   protobufjs: '>=8.6.6'
   fast-xml-parser: '>=5.7.0'
   fast-xml-builder: '>=1.1.7'
-  fast-uri: '>=3.1.8 <4'
+  fast-uri: '>=3.1.9 <4'
   hono: '>=4.13.11'
   '@hono/node-server': '>=2.0.5'
   js-yaml@<5: '>=4.3.2 <5'
   js-yaml@>=5: '>=5.2.0'
   browserslist: '>=4.28.7'
   baseline-browser-mapping: '>=2.11.0'
-  qs: '>=6.16.0'
+  qs: '>=6.16.1'
   '@humanfs/node': '>=0.16.8'
   engine.io: '>=6.6.10'
-  body-parser: '>=2.3.0'
+  body-parser: '>=2.4.0'
   '@opentelemetry/core': '>=2.8.0'
-  postcss: '>=8.5.18'
+  postcss: '>=8.5.23'
   uuid: '>=14.0.0'
   ws: '>=8.21.0'
   tmp: '>=0.2.6'
@@ -41,14 +41,15 @@ overrides:
   source-map-js: '>=1.2.2'
   proxy-addr: '>=2.0.8'
   '@babel/core': ^8.0.1
+  zod@>=4: '>=4.6.6'
 
 importers:
 
   .:
     dependencies:
       '@edidi-hq/core':
-        specifier: github:edidi-hq/core#v0.298.0
-        version: git+https://git@github.com:edidi-hq/core.git#9479936dd8c08f85da7a26eddec49d5deddc76ff(@upstash/redis@1.38.0)(typescript@5.9.3)
+        specifier: github:edidi-hq/core#9e181bdc85b6feabc32351718f1c38888bb8bfc2
+        version: git+https://git@github.com:edidi-hq/core.git#9e181bdc85b6feabc32351718f1c38888bb8bfc2(@upstash/redis@1.38.0)(typescript@5.9.3)
       '@upstash/redis':
         specifier: ^1.38.0
         version: 1.38.0
@@ -185,9 +186,9 @@ packages:
     resolution: {integrity: sha512-K8ponJDxBwDHigkeFqaqT5wLGl4bTlwMafR8k7b5CPxr6Ww+UG9ls8Yx6Tcpboxu97eeGVEEyKcHmEyOwN1vSw==}
     engines: {node: ^22.18.0 || >=24.11.0}
 
-  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#9479936dd8c08f85da7a26eddec49d5deddc76ff':
-    resolution: {commit: 9479936dd8c08f85da7a26eddec49d5deddc76ff, repo: git@github.com:edidi-hq/core.git, type: git}
-    version: 0.298.0
+  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#9e181bdc85b6feabc32351718f1c38888bb8bfc2':
+    resolution: {commit: 9e181bdc85b6feabc32351718f1c38888bb8bfc2, repo: git@github.com:edidi-hq/core.git, type: git}
+    version: 0.298.1
     engines: {node: '>=22.15.0'}
     peerDependencies:
       '@aws-sdk/client-s3': ^3.1065.0
@@ -2461,10 +2462,10 @@ packages:
     resolution: {integrity: sha512-Q6/nZLe6jxuU80qb/4uJ4t5v2VEZ44lzQjPDhYJNztRQ4wyWc6VF3D3Kb/fAuPetZQnhS3hnajCf9CsWesghLQ==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
-      zod: ^3.25.0 || ^4.0.0
+      zod: '>=4.6.6'
 
-  zod@4.3.6:
-    resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
+  zod@4.6.7:
+    resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
 
 snapshots:
 
@@ -2564,7 +2565,7 @@ snapshots:
       '@babel/helper-string-parser': 8.0.0
       '@babel/helper-validator-identifier': 8.0.2
 
-  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#9479936dd8c08f85da7a26eddec49d5deddc76ff(@upstash/redis@1.38.0)(typescript@5.9.3)':
+  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#9e181bdc85b6feabc32351718f1c38888bb8bfc2(@upstash/redis@1.38.0)(typescript@5.9.3)':
     optionalDependencies:
       '@upstash/redis': 1.38.0
       typescript: 5.9.3
@@ -3655,8 +3656,8 @@ snapshots:
       '@babel/parser': 7.29.2
       eslint: 9.39.4(jiti@2.6.1)
       hermes-parser: 0.25.1
-      zod: 4.3.6
-      zod-validation-error: 4.0.2(zod@4.3.6)
+      zod: 4.6.7
+      zod-validation-error: 4.0.2(zod@4.6.7)
 
   eslint-plugin-react@7.37.5(eslint@9.39.4(jiti@2.6.1)):
     dependencies:
@@ -4870,8 +4871,8 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zod-validation-error@4.0.2(zod@4.3.6):
+  zod-validation-error@4.0.2(zod@4.6.7):
     dependencies:
-      zod: 4.3.6
+      zod: 4.6.7
 
-  zod@4.3.6: {}
+  zod@4.6.7: {}
