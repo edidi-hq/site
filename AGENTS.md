@@ -11,7 +11,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 The public marketing site for the brand (`BRAND.name`, on core's `SITE_HOST`) — a single
 Next.js 16 App Router service on Vercel. Brand identity comes from a private shared package,
 pricing comes from the platform API (`BRAND.appUrl`), and the only server code is four
-Server Actions.
+Server Actions and one read-only endpoint (`SITE_API_ROUTES.visitorCountry`, the visitor's IP
+country for a pre-built page's starting choice).
 
 ## Architecture questions → invoke `repo-map`
 
@@ -44,7 +45,7 @@ Run these locally before you claim anything is done.
 - **Runtime code imports only `@edidi-hq/core/brand`, `@edidi-hq/core/region/countries`,
   `@edidi-hq/core/security/rate-limit`, `@edidi-hq/core/security/rate-limit-tiers` and the
   pure slices `billing/trial-deadlines`, `billing/capacity`, `billing/catalog`,
-  `billing/limit-format`, `money/format`, `money/types`, `billing/features`, `billing/platform-tax`, `region/sales-tax`, `billing/reserved-mail-domain`, `billing/retention`, `locales`, `sectors`, `modules/catalog`, `region/iso-3166`, `domains/public-email`, `trial/request-terms` and `ui/card-grid` (+ its stylesheet, imported by `globals.css`).**
+  `billing/limit-format`, `money/format`, `money/types`, `billing/features`, `billing/platform-tax`, `region/sales-tax`, `billing/reserved-mail-domain`, `billing/retention`, `locales`, `sectors`, `modules/catalog`, `region/iso-3166`, `region/visitor-origin`, `domains/public-email`, `trial/request-terms` and `ui/card-grid` (+ its stylesheet, imported by `globals.css`).**
   Every other subpath of that package needs peer dependencies this repo does not install
   (`region/countries` has type-only imports; `region/phone` needs a phone library the site does
   not install, so subpaths are admitted one by one; the two rate-limit modules need only the

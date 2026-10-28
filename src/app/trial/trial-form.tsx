@@ -43,9 +43,8 @@ import { CONTACT_EMAIL } from "@/lib/contacts";
 import { submitWithoutReset } from "@/components/ui/form/submit";
 import { useFocusAfterFailure } from "@/components/ui/form/focus-after-failure";
 import { COUNTRIES, isServedCountry } from "@/data/countries";
-import { SECTORS } from "@edidi-hq/core/sectors";
+import { SECTOR_OPTIONS } from "@edidi-hq/core/sectors";
 import { TRIAL_STEPS_DONE, TrialStepper } from "./stepper";
-import { LEAD_MARKET } from "@/lib/market";
 import { TrialTimeline } from "./timeline";
 import { READ_ONLY_GRACE_DAYS, TRIAL_LENGTH, TRIAL_MESSAGE_CAP, TRIAL_PLAN_NAME, TRIAL_SEAT_CAP, TRIAL_STORAGE, NO_CARD_REQUIRED, TRIAL_SETUP_TIME, MAGIC_LINK_LIFETIME } from "@/lib/trial-terms";
 import { contactHref } from "@/app/contact/tabs";
@@ -139,9 +138,6 @@ const hintStyle: React.CSSProperties = {
 /** The fields that live on step 1 of the form. */
 const STEP_ONE_FIELDS = ["role", "orgSize", "sector", "country"] as const;
 
-/** Core's industry list — the one the app validates a trial's industry against. */
-const SECTOR_OPTIONS = SECTORS.map((sector) => ({ value: sector, label: sector }));
-
 function SubmitButton({ isValid, pending }: { isValid: boolean; pending: boolean }) {
   const disabled = pending || !isValid;
   return (
@@ -155,7 +151,7 @@ function SubmitButton({ isValid, pending }: { isValid: boolean; pending: boolean
   );
 }
 
-export function TrialForm() {
+export function TrialForm({ initialCountry }: { initialCountry: string }) {
   const [step, setStep] = useState<1 | 2>(1);
   // The server action itself, not a wrapper: React can then post the form to
   // it without JavaScript and render the answer on the server.
@@ -210,8 +206,9 @@ export function TrialForm() {
   const [sectorOtherValue, setSectorOtherValue] = useState(posted.sectorOther ?? "");
   const sectorComplete =
     sectorValue !== "" && (sectorValue !== "Other" || sectorOtherValue.trim().length > 0);
-  // Country defaults to the lead market, which is a valid selection.
-  const [countryValue, setCountryValue] = useState<string>(posted.country ?? LEAD_MARKET);
+  // Country starts where the visitor is (the page reads it; the lead market
+  // when unknown) — a refusal keeps what they chose.
+  const [countryValue, setCountryValue] = useState<string>(posted.country ?? initialCountry);
   const [consentValue, setConsentValue] = useState(posted.consent === "on");
 
   // Two-step split: step 1 is the quick tappable setup (role/size/industry/

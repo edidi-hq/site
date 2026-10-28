@@ -38,6 +38,7 @@ import { buildSectorValue, isStorableSector } from "@edidi-hq/core/sectors";
 import { humanCheckRefusal, rateLimitRefusal, screenSubmission } from "@/lib/submission-guard";
 import { CONTACT_EMAIL } from "@/lib/contacts";
 import { exceedsLimit, FORM_MESSAGES, tooLongMessage, withinLimit } from "@/lib/form-rules";
+import { onBehalfOfVisitorHeaders } from "@/lib/visitor";
 import { trialEmailError } from "./email-check";
 import { VERIFY_FAILED_MESSAGE, type VerifyState } from "./verify/[token]/state";
 
@@ -125,7 +126,8 @@ async function answerTrialRequest(formData: FormData): Promise<TrialFormState> {
   try {
     response = await platformFetch(PLATFORM_API_PATHS.trialRequest, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      // For the visitor: their origin and this site's identity (see visitor.ts).
+      headers: { "Content-Type": "application/json", ...(await onBehalfOfVisitorHeaders()) },
       body: JSON.stringify({
         name,
         email,
@@ -169,7 +171,8 @@ export async function reissueTrialToken(
   try {
     response = await platformFetch(PLATFORM_API_PATHS.trialReissue, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      // For the visitor: their origin and this site's identity (see visitor.ts).
+      headers: { "Content-Type": "application/json", ...(await onBehalfOfVisitorHeaders()) },
       body: JSON.stringify({ token }),
     });
   } catch {
@@ -224,7 +227,8 @@ export async function confirmTrialVerification(
   try {
     response = await platformFetch(PLATFORM_API_PATHS.trialVerify, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      // For the visitor: their origin and this site's identity (see visitor.ts).
+      headers: { "Content-Type": "application/json", ...(await onBehalfOfVisitorHeaders()) },
       body: JSON.stringify({ token }),
       cache: "no-store",
     });

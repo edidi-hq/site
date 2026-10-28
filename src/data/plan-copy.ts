@@ -134,4 +134,7 @@ export const FEATURE_LABELS: Readonly<Record<string, string>> = {
   commitmentControl: "Budgets that count commitments, not just spend",
   companyBoard: "Company Board and executive summary",
   oversightRoles: "Auditor and Company Board roles",
+  // The app's own words (its `features.secondaryReportingCurrency`), which the
+  // live pricing API serves, so the fallback reads the same.
+  secondaryReportingCurrency: "Show totals in a second reporting currency",
 };

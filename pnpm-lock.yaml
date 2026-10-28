@@ -47,8 +47,8 @@ importers:
   .:
     dependencies:
       '@edidi-hq/core':
-        specifier: github:edidi-hq/core#v0.290.0
-        version: git+https://git@github.com:edidi-hq/core.git#44c7ee974ea79cb89224d222316ac437e1ce9d98(@upstash/ratelimit@2.0.8(@upstash/redis@1.38.0))(@upstash/redis@1.38.0)(typescript@5.9.3)
+        specifier: github:edidi-hq/core#v0.297.0
+        version: git+https://git@github.com:edidi-hq/core.git#02634718f3464d49f4fb88ffaf0be0e78a36c59b(@upstash/ratelimit@2.0.8(@upstash/redis@1.38.0))(@upstash/redis@1.38.0)(typescript@5.9.3)
       '@upstash/ratelimit':
         specifier: ^2.0.8
         version: 2.0.8(@upstash/redis@1.38.0)
@@ -188,9 +188,9 @@ packages:
     resolution: {integrity: sha512-K8ponJDxBwDHigkeFqaqT5wLGl4bTlwMafR8k7b5CPxr6Ww+UG9ls8Yx6Tcpboxu97eeGVEEyKcHmEyOwN1vSw==}
     engines: {node: ^22.18.0 || >=24.11.0}
 
-  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#44c7ee974ea79cb89224d222316ac437e1ce9d98':
-    resolution: {commit: 44c7ee974ea79cb89224d222316ac437e1ce9d98, repo: git@github.com:edidi-hq/core.git, type: git}
-    version: 0.290.0
+  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#02634718f3464d49f4fb88ffaf0be0e78a36c59b':
+    resolution: {commit: 02634718f3464d49f4fb88ffaf0be0e78a36c59b, repo: git@github.com:edidi-hq/core.git, type: git}
+    version: 0.297.0
     engines: {node: '>=22.15.0'}
     peerDependencies:
       '@aws-sdk/client-s3': ^3.1065.0
@@ -2579,7 +2579,7 @@ snapshots:
       '@babel/helper-string-parser': 8.0.0
       '@babel/helper-validator-identifier': 8.0.2
 
-  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#44c7ee974ea79cb89224d222316ac437e1ce9d98(@upstash/ratelimit@2.0.8(@upstash/redis@1.38.0))(@upstash/redis@1.38.0)(typescript@5.9.3)':
+  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#02634718f3464d49f4fb88ffaf0be0e78a36c59b(@upstash/ratelimit@2.0.8(@upstash/redis@1.38.0))(@upstash/redis@1.38.0)(typescript@5.9.3)':
     optionalDependencies:
       '@upstash/ratelimit': 2.0.8(@upstash/redis@1.38.0)
       '@upstash/redis': 1.38.0

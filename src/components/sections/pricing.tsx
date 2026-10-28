@@ -21,7 +21,9 @@ import { formatEnglishList } from "@/lib/english-list";
 import { ANNUAL_BILLED_MONTHS, PLAN_CATALOG, PLAN_ORDER } from "@edidi-hq/core/billing/catalog";
 import { READ_ONLY_GRACE_DAYS, TRIAL_DURATION_DAYS, TRIAL_PLAN, TRIAL_PLAN_NAME, TRIAL_SEAT_CAP, TRIAL_STORAGE, NO_CARD_REQUIRED } from "@/lib/trial-terms";
 import { contactHref } from "@/app/contact/tabs";
-import { LEAD_CURRENCY } from "@/lib/market";
+import { LEAD_CURRENCY, startingCurrency } from "@/lib/market";
+import { useVisitorCountry } from "@/lib/hooks/use-visitor-country";
+import { ChoiceGroup } from "@/components/ui/form/choice-group";
 import { SITE_ROUTES } from "@/lib/routes";
 import { Z_INDEX } from "@/lib/layers";
 import { cardGridProps } from "@/lib/card-grid";
@@ -91,10 +93,12 @@ export function Pricing({ data, headingAs = "h2" }: PricingProps) {
   const [billing, setBilling] = useState<BillingCycle>("annual");
 
   const currencies = getAvailableCurrencies(data);
-  // Nigeria-first market — lead with Naira; fall back to whatever the API offers.
-  const [currency, setCurrency] = useState<string>(
-    currencies.includes(LEAD_CURRENCY) ? LEAD_CURRENCY : currencies[0],
-  );
+  // Opens in the lead currency (the page is pre-built), then in the visitor's
+  // own once the site says where they are — unless they have already chosen.
+  // Asked only when there is a currency to choose between.
+  const visitorCountry = useVisitorCountry(currencies.length > 1);
+  const [chosenCurrency, setChosenCurrency] = useState<string | null>(null);
+  const currency = chosenCurrency ?? startingCurrency(visitorCountry, currencies);
 
   // Contrast / anchoring: render plans in ascending price so the premium tier
   // (Enterprise) sits to the right of the featured plan and anchors it — the
@@ -219,84 +223,25 @@ export function Pricing({ data, headingAs = "h2" }: PricingProps) {
             flexWrap: "wrap",
           }}
         >
-          {/* Billing toggle */}
-          <div
-            style={{
-              display: "inline-flex",
-              border: "1px solid var(--color-border)",
-              borderRadius: "var(--radius-card)",
-              padding: "4px",
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => setBilling("monthly")}
-              style={{
-                padding: "8px 20px",
-                borderRadius: "var(--radius-md)",
-                fontSize: "var(--text-md)",
-                fontWeight: 500,
-                cursor: "pointer",
-                border: "none",
-                transition: cssTransition(["background-color", "color"]),
-                backgroundColor:
-                  billing === "monthly" ? "var(--color-navy-primary)" : "transparent",
-                color: billing === "monthly" ? "var(--color-white)" : "var(--color-text-muted)",
-              }}
-            >
-              Monthly
-            </button>
-            <button
-              type="button"
-              onClick={() => setBilling("annual")}
-              style={{
-                padding: "8px 20px",
-                borderRadius: "var(--radius-md)",
-                fontSize: "var(--text-md)",
-                fontWeight: 500,
-                cursor: "pointer",
-                border: "none",
-                transition: cssTransition(["background-color", "color"]),
-                backgroundColor:
-                  billing === "annual" ? "var(--color-gold)" : "transparent",
-                color: billing === "annual" ? "var(--color-navy-primary)" : "var(--color-text-muted)",
-              }}
-            >
-              {ANNUAL_TOGGLE_LABEL}
-            </button>
-          </div>
-
-          {/* Currency toggle */}
+          {/* Billing period and currency: radio groups, so a screen reader hears which is chosen. */}
+          <ChoiceGroup
+            variant="segmented"
+            ariaLabel="Billing period"
+            value={billing}
+            onChange={(value) => setBilling(value === "monthly" ? "monthly" : "annual")}
+            options={[
+              { value: "monthly", label: "Monthly" },
+              { value: "annual", label: ANNUAL_TOGGLE_LABEL, emphasis: true },
+            ]}
+          />
           {currencies.length > 1 && (
-            <div
-              style={{
-                display: "inline-flex",
-                border: "1px solid var(--color-border)",
-                borderRadius: "var(--radius-card)",
-                padding: "4px",
-              }}
-            >
-              {currencies.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setCurrency(c)}
-                  style={{
-                    padding: "8px 16px",
-                    borderRadius: "var(--radius-md)",
-                    fontSize: "var(--text-md)",
-                    fontWeight: 500,
-                    cursor: "pointer",
-                    border: "none",
-                    transition: cssTransition(["background-color", "color"]),
-                    backgroundColor: currency === c ? "var(--color-navy-primary)" : "transparent",
-                    color: currency === c ? "var(--color-white)" : "var(--color-text-muted)",
-                  }}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
+            <ChoiceGroup
+              variant="segmented"
+              ariaLabel="Currency"
+              value={currency}
+              onChange={setChosenCurrency}
+              options={currencies.map((code) => ({ value: code, label: code }))}
+            />
           )}
         </m.div>
 

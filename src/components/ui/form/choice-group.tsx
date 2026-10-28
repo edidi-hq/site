@@ -9,6 +9,10 @@
  * Restrained navy/gold, not the bubbly reference aesthetic. Renders a proper
  * ARIA radiogroup with roving-tabindex arrow-key navigation, plus a hidden
  * input so the value posts with the surrounding <form>/server action.
+ *
+ * Without a `name` it is a VIEW choice, not a form field (the pricing section's
+ * billing period and currency): no hidden input and no no-script fallback —
+ * with JavaScript off it is simply not shown, and the page keeps its defaults.
  */
 
 import { useRef } from "react";
@@ -24,10 +28,13 @@ export interface ChoiceOption {
   icon?: LucideIcon;
   /** Small honest marker, e.g. "Most common". */
   badge?: string;
+  /** "segmented" only: shown in gold when selected (an offer, e.g. annual billing), navy otherwise. */
+  emphasis?: boolean;
 }
 
 interface ChoiceGroupProps {
-  name: string;
+  /** The posted field. Omit for a view choice (see above). */
+  name?: string;
   value: string;
   onChange: (value: string) => void;
   options: readonly ChoiceOption[];
@@ -37,7 +44,7 @@ interface ChoiceGroupProps {
    * secondary row of plain text, the selected one underlined — for a choice
    * nested under another choice group, so the two rows never look alike.
    */
-  variant?: "chips" | "cards" | "underline";
+  variant?: "chips" | "cards" | "underline" | "segmented";
   /** Grid columns for the "cards" variant. */
   columns?: number;
   invalid?: boolean;
@@ -69,6 +76,29 @@ function underlineOptionStyle(selected: boolean): React.CSSProperties {
     borderBottom: `2px solid ${selected ? "var(--color-gold)" : "transparent"}`,
     borderRadius: 0,
     transition: cssTransition(["border-color", "color"]),
+  };
+}
+
+/** A segmented option's look: one segment of a bordered bar, filled when selected. */
+function segmentedOptionStyle(selected: boolean, emphasis: boolean): React.CSSProperties {
+  return {
+    cursor: "pointer",
+    padding: "8px 18px",
+    fontSize: "var(--text-md)",
+    fontWeight: 500,
+    border: "none",
+    borderRadius: "var(--radius-md)",
+    backgroundColor: selected
+      ? emphasis
+        ? "var(--color-gold)"
+        : "var(--color-navy-primary)"
+      : "transparent",
+    color: selected
+      ? emphasis
+        ? "var(--color-navy-primary)"
+        : "var(--color-white)"
+      : "var(--color-text-muted)",
+    transition: cssTransition(["background-color", "color"]),
   };
 }
 
@@ -116,7 +146,18 @@ function optionStyle({
 }
 
 /** The row (chips, underline) or grid (cards) the options sit in. */
-function groupStyle(variant: "chips" | "cards" | "underline", columns: number): React.CSSProperties {
+function groupStyle(
+  variant: "chips" | "cards" | "underline" | "segmented",
+  columns: number,
+): React.CSSProperties {
+  if (variant === "segmented") {
+    return {
+      display: "inline-flex",
+      border: "1px solid var(--color-border)",
+      borderRadius: "var(--radius-card)",
+      padding: "4px",
+    };
+  }
   if (variant === "cards") {
     return { display: "grid", gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`, gap: "10px" };
   }
@@ -142,13 +183,21 @@ export function ChoiceGroup({
   const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const isCards = variant === "cards";
   const isUnderline = variant === "underline";
+  const isSegmented = variant === "segmented";
   const hasIcons = options.some((o) => o.icon);
-  const styleFor = (selected: boolean, optionInvalid: boolean, optionHasIcons: boolean) =>
-    isUnderline
-      ? underlineOptionStyle(selected)
-      : optionStyle({ selected, invalid: optionInvalid, isCards, hasIcons: optionHasIcons });
+  const styleFor = (
+    selected: boolean,
+    optionInvalid: boolean,
+    optionHasIcons: boolean,
+    emphasis = false,
+  ) =>
+    isSegmented
+      ? segmentedOptionStyle(selected, emphasis)
+      : isUnderline
+        ? underlineOptionStyle(selected)
+        : optionStyle({ selected, invalid: optionInvalid, isCards, hasIcons: optionHasIcons });
   // The resting edge colour a hovered option returns to.
-  const restingBorder = isUnderline
+  const restingBorder = isUnderline || isSegmented
     ? "transparent"
     : invalid
       ? "var(--color-danger-invalid)"
@@ -193,7 +242,7 @@ export function ChoiceGroup({
           })}
         </nav>
       </noscript>
-    ) : (
+    ) : name === undefined ? null : (
       <NoScriptSelect
         name={name}
         value={value}
@@ -226,9 +275,11 @@ export function ChoiceGroup({
             tabIndex={tabIndex}
             onClick={() => onChange(opt.value)}
             onKeyDown={(e) => onKeyDown(e, i)}
-            style={styleFor(selected, invalid, hasIcons)}
+            style={styleFor(selected, invalid, hasIcons, opt.emphasis)}
             onMouseEnter={(e) => {
-              if (!selected) e.currentTarget.style.borderColor = "var(--color-border-strong)";
+              if (!selected && !isSegmented) {
+                e.currentTarget.style.borderColor = "var(--color-border-strong)";
+              }
             }}
             onMouseLeave={(e) => {
               if (!selected) e.currentTarget.style.borderColor = restingBorder;
@@ -268,7 +319,7 @@ export function ChoiceGroup({
           </button>
         );
       })}
-      <input type="hidden" name={name} value={value} />
+      {name === undefined ? null : <input type="hidden" name={name} value={value} />}
     </div>
     </>
   );

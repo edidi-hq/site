@@ -41,6 +41,9 @@ import { dirname, join } from "node:path";
  *     the country codes, personal-mailbox list (and its
  *     dependency-free form hint), the trial request's bounds, size bands and
  *     link lifetime, shared with the app's API. No package imports.
+ *   - `region/visitor-origin` — the headers a trial call forwards the visitor's
+ *     IP and location in, and their parsing, shared with the app that reads
+ *     them. Server-only; its one import is `node:net` plus `region/iso-3166`.
  *   - `billing/retention` — the statutory record-retention floor a page states
  *     (the platform floor or the country's own, whichever is longer). Reaches
  *     only `region/countries` and its own floor constant.
@@ -61,6 +64,7 @@ import { dirname, join } from "node:path";
 const RUNTIME_ALLOWED = new Set([
   "brand",
   "region/countries",
+  "region/visitor-origin",
   "security/rate-limit",
   "security/rate-limit-tiers",
   "billing/trial-deadlines",

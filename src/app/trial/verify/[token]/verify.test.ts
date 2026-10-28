@@ -9,6 +9,7 @@ import { isValidElement, type ReactElement, type ReactNode } from "react";
  */
 
 vi.mock("server-only", () => ({}));
+vi.mock("@/lib/visitor", () => ({ onBehalfOfVisitorHeaders: async () => ({}) }));
 const platformFetch = vi.fn();
 vi.mock("@/lib/platform-fetch", () => ({ platformFetch: (...args: unknown[]) => platformFetch(...args) }));
 const redirect = vi.fn((target: string) => {

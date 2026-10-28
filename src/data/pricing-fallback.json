@@ -73,6 +73,7 @@
         "controlsMonitoring": false,
         "controlsAttestation": false,
         "analytics": false,
+        "secondaryReportingCurrency": false,
         "recurringTemplates": false,
         "budgetCodes": false,
         "commitmentControl": false,
@@ -191,6 +192,7 @@
         "controlsMonitoring": true,
         "controlsAttestation": true,
         "analytics": true,
+        "secondaryReportingCurrency": true,
         "recurringTemplates": true,
         "budgetCodes": true,
         "commitmentControl": true,
@@ -318,6 +320,7 @@
         "controlsMonitoring": true,
         "controlsAttestation": true,
         "analytics": true,
+        "secondaryReportingCurrency": true,
         "recurringTemplates": true,
         "budgetCodes": true,
         "commitmentControl": true,
@@ -378,7 +381,8 @@
     "prioritySupport": "Priority access to support",
     "commitmentControl": "Budgets that count commitments, not just spend",
     "companyBoard": "Company Board and executive summary",
-    "oversightRoles": "Auditor and Company Board roles"
+    "oversightRoles": "Auditor and Company Board roles",
+    "secondaryReportingCurrency": "Show totals in a second reporting currency"
   },
   "featureGroups": [
     {
@@ -445,7 +449,8 @@
         "customBranding",
         "commitmentControl",
         "companyBoard",
-        "oversightRoles"
+        "oversightRoles",
+        "secondaryReportingCurrency"
       ]
     },
     {
