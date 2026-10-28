@@ -10,7 +10,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 The public marketing site for the brand (`BRAND.name`, on core's `SITE_HOST`) — a single
 Next.js 16 App Router service on Vercel. Brand identity comes from a private shared package,
-pricing comes from the platform API (`BRAND.appUrl`), and the only server code is four
+pricing comes from the platform API (`BRAND.appUrl`), and the only server code is five
 Server Actions and one read-only endpoint (`SITE_API_ROUTES.visitorCountry`, the visitor's IP
 country for a pre-built page's starting choice).
 
@@ -49,10 +49,10 @@ Run these locally before you claim anything is done.
   Every other subpath of that package needs peer dependencies this repo does not install
   (`region/countries` has type-only imports; `region/phone` needs a phone library the site does
   not install, so subpaths are admitted one by one; the two rate-limit modules need only the
-  Upstash packages the site already has — the rest of `security/` does not, so it is admitted
+  Upstash Redis client the site already has — the rest of `security/` does not, so it is admitted
   module by module, never as `security/*`).
-  Tests may also import the dependency-free `security/dependency-floors` and
-  `brand/copy-guardrails`
+  Tests may also import the dependency-free `security/dependency-floors`,
+  `brand/copy-guardrails` and `brand/typed-brand`
   — they back the parity lock tests and never ship. "Runtime" includes `next.config.ts`
   (Node loads it at build and start). `src/lib/core-imports.lock.test.ts` scans `src/` and
   `next.config.ts`, enforces this list AND walks each allowed subpath's value-import graph, failing on any
