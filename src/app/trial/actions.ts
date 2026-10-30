@@ -19,8 +19,6 @@
 
 import { redirect } from "next/navigation";
 import {
-  isTrialRole,
-  OTHER_ROLE,
   TRIAL_FIELDS,
   type TrialFieldErrors,
   type TrialFormState,
@@ -31,6 +29,7 @@ import {
   type TrialResponsePayload,
 } from "./map-response";
 import { isOrgSize } from "@/lib/org-size";
+import { isTrialRole, OTHER_TRIAL_ROLE } from "@edidi-hq/core/trial/request-terms";
 import { isSelectableCountry } from "@/data/countries";
 import { platformFetch } from "@/lib/platform-fetch";
 import { PLATFORM_API_PATHS, PLATFORM_ORIGIN } from "@/lib/platform";
@@ -116,7 +115,7 @@ async function answerTrialRequest(formData: FormData): Promise<TrialFormState> {
   // A typed "Other" role rides along in `source` — the platform's `role` field
   // is an allow-list, so the free-text detail can't go there directly.
   const sourceOut =
-    role === OTHER_ROLE && roleOther
+    role === OTHER_TRIAL_ROLE && roleOther
       ? source
         ? `Role: ${roleOther} · ${source}`
         : `Role: ${roleOther}`
