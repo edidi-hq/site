@@ -48,8 +48,8 @@ importers:
   .:
     dependencies:
       '@edidi-hq/core':
-        specifier: github:edidi-hq/core#v0.303.0
-        version: git+https://git@github.com:edidi-hq/core.git#4cc328ec4235a4867230d717eafae311ce2146c0(@upstash/redis@1.38.0)(typescript@5.9.3)(zod@4.6.7)
+        specifier: github:edidi-hq/core#v0.304.0
+        version: git+https://git@github.com:edidi-hq/core.git#a049050f301ad30cc5a4801f5641b0bce424616d(@upstash/redis@1.38.0)(typescript@5.9.3)(zod@4.6.7)
       '@upstash/redis':
         specifier: ^1.38.0
         version: 1.38.0
@@ -186,9 +186,9 @@ packages:
     resolution: {integrity: sha512-K8ponJDxBwDHigkeFqaqT5wLGl4bTlwMafR8k7b5CPxr6Ww+UG9ls8Yx6Tcpboxu97eeGVEEyKcHmEyOwN1vSw==}
     engines: {node: ^22.18.0 || >=24.11.0}
 
-  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#4cc328ec4235a4867230d717eafae311ce2146c0':
-    resolution: {commit: 4cc328ec4235a4867230d717eafae311ce2146c0, repo: git@github.com:edidi-hq/core.git, type: git}
-    version: 0.303.0
+  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#a049050f301ad30cc5a4801f5641b0bce424616d':
+    resolution: {commit: a049050f301ad30cc5a4801f5641b0bce424616d, repo: git@github.com:edidi-hq/core.git, type: git}
+    version: 0.304.0
     engines: {node: '>=22.15.0'}
     peerDependencies:
       '@aws-sdk/client-s3': ^3.1065.0
@@ -2565,7 +2565,7 @@ snapshots:
       '@babel/helper-string-parser': 8.0.0
       '@babel/helper-validator-identifier': 8.0.2
 
-  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#4cc328ec4235a4867230d717eafae311ce2146c0(@upstash/redis@1.38.0)(typescript@5.9.3)(zod@4.6.7)':
+  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#a049050f301ad30cc5a4801f5641b0bce424616d(@upstash/redis@1.38.0)(typescript@5.9.3)(zod@4.6.7)':
     optionalDependencies:
       '@upstash/redis': 1.38.0
       typescript: 5.9.3
