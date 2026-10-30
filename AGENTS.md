@@ -98,7 +98,10 @@ Run these locally before you claim anything is done.
   wording from `src/lib/form-rules.ts` (inputs set `maxLength` from it), builds email with
   `src/lib/email-html.ts`, and logs failures through `src/lib/safe-log.ts` (error name only —
   never a provider message, which can carry addresses). `form-rules.lock.test.ts` fails on a
-  typed copy. Outgoing calls carry a timeout (`platformFetch`, Turnstile).
+  typed copy. Outgoing calls carry a timeout (`platformFetch`, Turnstile). `platformFetch` also
+  logs any call to the product that throws, returns a 5xx or returns something that is not
+  JSON (path, status, timing; never the body), because its callers turn those into a friendly
+  card and the reason would otherwise be lost.
 - **Each contact topic declares its own form.** `CONTACT_TOPICS` (`src/app/contact/topics.ts`)
   says, per topic, which inputs appear and which are required, their labels, the consent
   wording, the confirmation and the inbox it reaches (`disclosure` → the security inbox, with
@@ -108,7 +111,8 @@ Run these locally before you claim anything is done.
   emailed instead (`addToUpdatesList` in `src/lib/email.ts`).
 - **A magic link is spent only by a person.** The trial verify page renders a confirm button;
   `confirmTrialVerification` (a server action) calls the platform and redirects. Never call the
-  platform while rendering the GET — email link scanners open links before people do.
+  platform while rendering the GET — email link scanners open links before people do. A failed
+  press offers "Try again", which is safe: a link the platform already used signs the person in.
 - **The abuse-defence and CSP behaviour in `src/lib/rate-limit.ts` (each action's
   `failClosed`), `src/lib/turnstile.ts` and `next.config.ts` encodes deliberate tradeoffs,
   not oversights.** Read the header comment in the file first. This repo is public, so the specifics live in

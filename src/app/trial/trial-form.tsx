@@ -26,7 +26,8 @@ import { ORG_SIZE_OPTIONS, DEFAULT_ORG_SIZE } from "@/lib/org-size";
 import { BRAND, LEGAL_PAGES } from "@/lib/brand";
 import { fadeUpOnLoad } from "@/lib/animations";
 import { submitTrialRequest } from "./actions";
-import { INITIAL_STATE, OTHER_ROLE, TRIAL_ROLES, type TrialFormState } from "./state";
+import { OTHER_TRIAL_ROLE, TRIAL_ROLES } from "@edidi-hq/core/trial/request-terms";
+import { INITIAL_STATE, type TrialFormState } from "./state";
 import { trialEmailError } from "./email-check";
 import { FORM_LIMITS, hasEmailShape } from "@/lib/form-rules";
 import {
@@ -220,7 +221,7 @@ export function TrialForm({ initialCountry }: { initialCountry: string }) {
     orgSizeValue !== "" &&
     sectorComplete &&
     countryValue !== "" &&
-    (roleValue !== OTHER_ROLE || roleOtherValue.trim().length > 0);
+    (roleValue !== OTHER_TRIAL_ROLE || roleOtherValue.trim().length > 0);
 
   // ── Validity derivation ─────────────────────────────────────────────
   const isValid = useMemo(
@@ -413,7 +414,7 @@ export function TrialForm({ initialCountry }: { initialCountry: string }) {
                 style={{ ...inputStyle, marginTop: "10px" }}
               />
             </noscript>
-            {roleValue === OTHER_ROLE && (
+            {roleValue === OTHER_TRIAL_ROLE && (
               <div style={{ marginTop: "10px" }}>
                 <label style={labelStyle}>
                   Specify your role

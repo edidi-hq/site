@@ -12,7 +12,8 @@
  *   expired     — the token timed out; offer a one-click re-issue
  *   not_found   — token hash doesn't match any submission
  *   rejected    — admin rejected the underlying submission
- *   error       — network / platform error; try again later
+ *   error       — network / platform error; offer to press again (a retry is
+ *                 safe: a link already used signs the person in)
  */
 
 import { useActionState, useEffect, useRef, useState } from "react";
@@ -33,6 +34,8 @@ interface Props {
   status: string;
   message: string;
   token: string;
+  /** The confirm action, so an `error` card can offer to press again. */
+  retry?: { action: (formData: FormData) => void; pending: boolean };
 }
 
 export function VerifyConfirm({ token }: { token: string }) {
@@ -40,7 +43,14 @@ export function VerifyConfirm({ token }: { token: string }) {
   const [state, action, pending] = useActionState(confirmTrialVerification, INITIAL_VERIFY_STATE);
 
   if ("message" in state) {
-    return <VerifyResult status={state.status} message={state.message} token={token} />;
+    return (
+      <VerifyResult
+        status={state.status}
+        message={state.message}
+        token={token}
+        retry={{ action, pending }}
+      />
+    );
   }
 
   return (
@@ -64,7 +74,7 @@ export function VerifyConfirm({ token }: { token: string }) {
   );
 }
 
-export function VerifyResult({ status, message, token }: Props) {
+export function VerifyResult({ status, message, token, retry }: Props) {
   const [reissueState, reissueAction, reissuePending] = useActionState(
     reissueTrialToken,
     { status: "idle" as const },
@@ -150,6 +160,22 @@ export function VerifyResult({ status, message, token }: Props) {
       title="We couldn't verify this link."
       message={message}
     >
+      {status === "error" && retry && (
+        <form
+          action={retry.action}
+          onSubmit={submitWithoutReset(retry.action)}
+          style={{ marginTop: "16px" }}
+        >
+          <input type="hidden" name="token" value={token} />
+          <button
+            type="submit"
+            disabled={retry.pending}
+            {...buttonProps({ size: "md", disabled: retry.pending })}
+          >
+            {retry.pending ? "Setting up…" : "Try again"}
+          </button>
+        </form>
+      )}
       <Link
         href={SITE_PAGES.trial()}
         style={{

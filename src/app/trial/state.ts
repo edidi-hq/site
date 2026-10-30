@@ -43,29 +43,6 @@ export const TRIAL_ERROR_FIELDS = [
 export type TrialErrorField = (typeof TRIAL_ERROR_FIELDS)[number];
 export type TrialFieldErrors = Partial<Record<TrialErrorField, string>>;
 
-/**
- * The job titles a trial request may name — the platform's `role` field is an
- * allow-list of these values. Ordered likeliest-first, the order the form
- * shows them; `label` is what the visitor reads.
- */
-export const TRIAL_ROLES = [
-  { value: "Finance Manager", label: "Finance Manager" },
-  { value: "Finance Director", label: "Finance Director" },
-  { value: "CFO", label: "CFO" },
-  { value: "Operations Manager", label: "Operations Manager" },
-  { value: "MD", label: "MD / CEO" },
-  { value: "Other", label: "Other" },
-] as const;
-export type TrialRole = (typeof TRIAL_ROLES)[number]["value"];
-
-/** The role whose free-text detail rides along with the request. */
-export const OTHER_ROLE: TrialRole = "Other";
-
-/** Whether `value` is one of the trial's roles. */
-export function isTrialRole(value: string): value is TrialRole {
-  return TRIAL_ROLES.some((role) => role.value === value);
-}
-
 export type TrialFormState =
   | { status: "idle" }
   | {
