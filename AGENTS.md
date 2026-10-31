@@ -52,7 +52,7 @@ Run these locally before you claim anything is done.
   Upstash Redis client the site already has — the rest of `security/` does not, so it is admitted
   module by module, never as `security/*`).
   Tests may also import the dependency-free `security/dependency-floors`,
-  `brand/copy-guardrails` and `brand/typed-brand`
+  `security/core-dependency-source`, `brand/copy-guardrails` and `brand/typed-brand`
   — they back the parity lock tests and never ship. "Runtime" includes `next.config.ts`
   (Node loads it at build and start). `src/lib/core-imports.lock.test.ts` scans `src/` and
   `next.config.ts`, enforces this list AND walks each allowed subpath's value-import graph, failing on any
@@ -90,6 +90,7 @@ Run these locally before you claim anything is done.
   copy the entries verbatim, reinstall, and confirm the lockfile moved. A site-only extra floor
   must be bounded to one major (use the version-ranged key form) — an unbounded one silently
   floated three majors and broke `pnpm lint` repo-wide. Re-run `pnpm lint` after any change.
+- **The lockfile must record core as `git@github.com:edidi-hq/core.git`, the only address CI and Vercel authenticate**; an install on a machine without its SSH key records plain HTTPS and every CI install then fails ("could not read Username"). `core-dependency-source.lock.test.ts` fails on it; core's RELEASING.md says how to bump without the key.
 - **Name tests `*.test.ts`, never `*.test.tsx`.** The vitest glob excludes `.tsx`, so a
   `.tsx` test is silently never executed and appears to pass.
 - **Server Actions return a state object; they never throw to the client.** Every form action
