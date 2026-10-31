@@ -9,8 +9,8 @@ import { moduleName, BRAND, moduleHref } from "@/lib/brand";
 export const metadata: Metadata = pageMetadata({
   path: moduleHref("connect"),
   title: `${moduleName("connect")} — ${BRAND.name} in your existing stack`,
-  description: `Typed webhooks, scoped API keys, a documented REST API, journal entries for your ledger, and single sign-on (OIDC or SAML) with SCIM. Push ${BRAND.name} events into the systems your organisation already runs.`,
-  socialDescription: "Typed webhooks with Standard Webhooks signatures, scoped API keys, and SSO/SCIM. Your operational record flowing where it needs to go.",
+  description: `Signed webhooks, scoped API keys, a documented REST API, journal entries for your ledger, and single sign-on (OIDC or SAML) with SCIM. Push ${BRAND.name} events into the systems your organisation already runs.`,
+  socialDescription: "Webhooks with Standard Webhooks signatures, scoped API keys, and SSO/SCIM. Your operational record flowing where it needs to go.",
 });
 
 export default async function ProductConnectPage() {

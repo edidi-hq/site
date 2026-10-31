@@ -89,6 +89,9 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return (
     <script
       type="application/ld+json"
+      // JSON-LD must be raw script text. `<` is escaped below, so the data cannot
+      // close the tag early.
+      // eslint-disable-next-line @eslint-react/dom-no-dangerously-set-innerhtml -- see above
       dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }}
     />
   );

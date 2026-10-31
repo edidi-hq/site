@@ -180,7 +180,7 @@ export function ChoiceGroup({
   hrefFor,
   noScriptPlaceholder,
 }: ChoiceGroupProps) {
-  const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const buttonElementsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const isCards = variant === "cards";
   const isUnderline = variant === "underline";
   const isSegmented = variant === "segmented";
@@ -206,7 +206,7 @@ export function ChoiceGroup({
   const move = (from: number, dir: 1 | -1) => {
     const next = (from + dir + options.length) % options.length;
     onChange(options[next]!.value);
-    btnRefs.current[next]?.focus();
+    buttonElementsRef.current[next]?.focus();
   };
 
   const onKeyDown = (e: React.KeyboardEvent, i: number) => {
@@ -267,7 +267,7 @@ export function ChoiceGroup({
           <button
             key={opt.value}
             ref={(el) => {
-              btnRefs.current[i] = el;
+              buttonElementsRef.current[i] = el;
             }}
             type="button"
             role="radio"

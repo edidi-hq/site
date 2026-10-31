@@ -24,7 +24,7 @@ export const SECURITY_FAQS: SecurityFaq[] = [
   },
   {
     q: "Can we export everything — for an auditor, regulator, or migration?",
-    a: "Yes. The audit-trail export bundles every approval, signature, query, and role change for any period into a regulator-ready file. Document PDFs and attachments are exported alongside. You own your data; we don't hold it hostage.",
+    a: "Yes. The audit-trail export bundles every approval, signature, query, and role change for any period of up to a year into a regulator-ready file. Document PDFs and attachments are exported alongside. You own your data; we don't hold it hostage.",
   },
   {
     q: "Do you support SSO and SCIM?",

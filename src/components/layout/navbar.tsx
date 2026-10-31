@@ -22,7 +22,7 @@ export function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
 
-  const dropdownTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dropdownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   /* scroll detection */
@@ -34,23 +34,23 @@ export function Navbar() {
 
   /* dropdown helpers */
   const openDropdown = useCallback(() => {
-    if (dropdownTimeout.current) {
-      clearTimeout(dropdownTimeout.current);
-      dropdownTimeout.current = null;
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+      dropdownTimeoutRef.current = null;
     }
     setDropdownOpen(true);
   }, []);
 
   const closeDropdown = useCallback(() => {
-    dropdownTimeout.current = setTimeout(() => {
+    dropdownTimeoutRef.current = setTimeout(() => {
       setDropdownOpen(false);
     }, 150);
   }, []);
 
   const closeDropdownImmediate = useCallback(() => {
-    if (dropdownTimeout.current) {
-      clearTimeout(dropdownTimeout.current);
-      dropdownTimeout.current = null;
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+      dropdownTimeoutRef.current = null;
     }
     setDropdownOpen(false);
   }, []);

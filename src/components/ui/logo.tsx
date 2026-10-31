@@ -114,6 +114,7 @@ function MarkSvg({
       role="img"
     >
       {shapes.map((shape, index) => (
+        // eslint-disable-next-line @eslint-react/no-array-index-key -- the mark is a fixed drawing
         <Shape key={index} shape={shape} colors={colors} />
       ))}
     </svg>
