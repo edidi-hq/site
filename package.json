@@ -21,7 +21,7 @@
     "generate:brand-tokens": "vitest run src/lib/brand-tokens.lock.test.ts -u"
   },
   "dependencies": {
-    "@edidi-hq/core": "github:edidi-hq/core#v0.304.0",
+    "@edidi-hq/core": "github:edidi-hq/core#v0.305.0",
     "@upstash/redis": "^1.38.0",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.17.0",
@@ -63,7 +63,8 @@
       "fast-xml-builder": ">=1.1.7",
       "fast-uri": ">=3.1.9 <4",
       "hono": ">=4.13.11",
-      "@hono/node-server": ">=2.0.5",
+      "@hono/node-server": ">=2.1.3 <3",
+      "@sentry/bundler-plugins>glob": ">=14.0.2 <15",
       "js-yaml@<5": ">=4.3.2 <5",
       "js-yaml@>=5": ">=5.2.0",
       "browserslist": ">=4.28.7",
