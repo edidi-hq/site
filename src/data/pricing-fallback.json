@@ -287,7 +287,7 @@
         {
           "key": "connect",
           "name": "Novorit Integrations",
-          "description": "Webhooks and typed API for accounting, HR, and data-warehouse systems; SSO authentication; bank verification; notification delivery. Accounting and ERP systems take Novorit data through that API, webhooks, or the journal export files."
+          "description": "Webhooks and a documented API for accounting, HR, and data-warehouse systems; SSO authentication; bank verification; notification delivery. Accounting and ERP systems take Novorit data through that API, webhooks, or the journal export files."
         },
         {
           "key": "grants",
@@ -545,7 +545,7 @@
     "connect": {
       "name": "Novorit Integrations",
       "sidebarLabel": "Integrations",
-      "description": "Webhooks and typed API for accounting, HR, and data-warehouse systems; SSO authentication; bank verification; notification delivery. Accounting and ERP systems take Novorit data through that API, webhooks, or the journal export files.",
+      "description": "Webhooks and a documented API for accounting, HR, and data-warehouse systems; SSO authentication; bank verification; notification delivery. Accounting and ERP systems take Novorit data through that API, webhooks, or the journal export files.",
       "suite": "infrastructure",
       "features": [
         "apiAccess",

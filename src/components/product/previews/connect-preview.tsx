@@ -23,7 +23,7 @@ const API_KEYS = [
   },
   {
     name: "Legacy bridge",
-    status: "Rotated",
+    status: "Revoked",
     background: "rgba(var(--color-text-subtle-rgb), 0.12)",
     colour: "var(--color-text-muted)",
     used: "Never",

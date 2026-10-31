@@ -7,7 +7,7 @@ API, with a generated offline fallback in `src/data/pricing-fallback.json`.
 
 ## Getting started
 
-Requires Node 22 and pnpm (version pinned in `package.json`). Installing needs read access to
+Requires Node 24 (`.nvmrc`; `engines.node` also pins the Vercel runtime) and pnpm (version pinned in `package.json`). Installing needs read access to
 the private `@edidi-hq/core` repository.
 
 ```bash

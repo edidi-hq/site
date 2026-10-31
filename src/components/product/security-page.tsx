@@ -143,7 +143,7 @@ const STACK = [
       "Every approval, query, and role change written to an append-only log",
       "Dedicated trail for role changes, capturing who changed what and why",
       "Board-access lifecycle fully tracked — provisioning, approval, expiry, renewal, revocation",
-      "One-click regulator-ready export for any period",
+      "One-click regulator-ready export for any period of up to a year",
     ],
     Mockup: AuditMockup,
     caption: "tamper-evident audit trail · role-change log",

@@ -95,7 +95,7 @@ export const MODULE_COPY: Record<ModuleKey, ModuleCopy> = {
     icon: Link2,
     tagline: "External systems and integrations",
     summary:
-      `Push ${BRAND.name} events into your accounting, HR, or data-warehouse stack through webhooks and a typed API — your operational record flowing where it needs to go.`,
+      `Push ${BRAND.name} events into your accounting, HR, or data-warehouse stack through webhooks and a documented API — your operational record flowing where it needs to go.`,
   },
 };
 

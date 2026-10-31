@@ -216,7 +216,7 @@ export const SUITE_PAGES: Record<ModuleSuite, SuitePageConfig> = {
         icon: Link2,
         title: "Your record, where it needs to go next",
         body:
-          "Approved vouchers and payments into your ledger as journal entries, issued orders into the ERP, role changes into the HR system — through typed webhooks, a documented API and ready-to-import files rather than a monthly export somebody assembles by hand.",
+          "Approved vouchers and payments into your ledger as journal entries, approved orders into the ERP, role changes into the HR system — through signed webhooks, a documented API and ready-to-import files rather than a monthly export somebody assembles by hand.",
       },
       {
         icon: FileLock2,
@@ -235,12 +235,12 @@ export const SUITE_PAGES: Record<ModuleSuite, SuitePageConfig> = {
       connect: {
         claim: `Connects ${BRAND.name} to everything around it.`,
         body:
-          "Webhooks and a typed REST API for accounting, HR and data-warehouse systems, scoped API keys, single sign-on, and the notification delivery the rest of the platform runs on.",
+          "Webhooks and a documented REST API for accounting, HR and data-warehouse systems, scoped API keys, single sign-on, and the notification delivery the rest of the platform runs on.",
       },
     },
     metaTitleTail: "access, alerts and integrations",
     metaDescription:
-      `Single sign-on, enforced access policy, and typed webhooks and APIs that push what ${BRAND.name} approves into your accounting, HR and data systems.`,
+      `Single sign-on, enforced access policy, and signed webhooks and a documented API that push what ${BRAND.name} approves into your accounting, HR and data systems.`,
   },
 };
 

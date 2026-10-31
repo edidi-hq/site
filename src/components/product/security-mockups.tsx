@@ -121,6 +121,15 @@ export function IsolationMockup() {
 
 /* ── 02. Authority ──────────────────────────────────────────────── */
 
+/** The role columns, in order — the header and every row read this one list. */
+const ROLE_COLUMNS = [
+  { key: "staff", label: "STAFF" },
+  { key: "hod", label: "DEPT HEAD" },
+  { key: "finance", label: "FINANCE" },
+  { key: "md", label: "MD" },
+  { key: "admin", label: "ADMIN" },
+] as const;
+
 const AUTHORITY_ROWS = [
   { capability: "Raise voucher / PO", staff: true, hod: true, finance: true, md: true, admin: true },
   { capability: "Approve for a department", staff: false, hod: true, finance: false, md: false, admin: false },
@@ -160,9 +169,9 @@ export function AuthorityMockup() {
           <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-3xs)", color: "var(--color-text-muted)", letterSpacing: "0.06em" }}>
             CAPABILITY
           </span>
-          {["STAFF", "DEPT HEAD", "FINANCE", "MD", "ADMIN"].map((r) => (
+          {ROLE_COLUMNS.map(({ key, label }) => (
             <span
-              key={r}
+              key={key}
               // Phones: headings stand on end so five roles fit beside the capability column.
               className="justify-self-center rotate-180 [writing-mode:vertical-rl] sm:rotate-0 sm:[writing-mode:horizontal-tb]"
               style={{
@@ -173,7 +182,7 @@ export function AuthorityMockup() {
                 textAlign: "center",
               }}
             >
-              {r}
+              {label}
             </span>
           ))}
         </div>
@@ -189,9 +198,9 @@ export function AuthorityMockup() {
             }}
           >
             <span style={{ fontSize: "var(--text-xs)", color: "var(--color-text-primary)" }}>{row.capability}</span>
-            {[row.staff, row.hod, row.finance, row.md, row.admin].map((v, j) => (
-              <span key={j} style={{ display: "flex", justifyContent: "center" }}>
-                {v ? (
+            {ROLE_COLUMNS.map(({ key }) => (
+              <span key={key} style={{ display: "flex", justifyContent: "center" }}>
+                {row[key] ? (
                   <Check size={14} style={{ color: "var(--color-success)" }} strokeWidth={2.5} aria-label="allowed" />
                 ) : (
                   <X size={14} style={{ color: "var(--color-text-inverse-muted)" }} strokeWidth={2} aria-label="not allowed" />

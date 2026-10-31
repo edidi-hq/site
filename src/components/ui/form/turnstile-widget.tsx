@@ -21,15 +21,15 @@ interface TurnstileApi {
  */
 export function TurnstileWidget({ fallbackEmail }: { fallbackEmail: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const rendered = useRef(false);
+  const renderedRef = useRef(false);
 
   const renderWidget = useCallback(() => {
-    if (!TURNSTILE_SITE_KEY || rendered.current || !containerRef.current) return;
+    if (!TURNSTILE_SITE_KEY || renderedRef.current || !containerRef.current) return;
     const turnstile = (window as unknown as { turnstile?: TurnstileApi }).turnstile;
     if (!turnstile) return;
     const size = containerRef.current.clientWidth < STANDARD_WIDGET_WIDTH ? "compact" : "normal";
     turnstile.render(containerRef.current, { sitekey: TURNSTILE_SITE_KEY, theme: "light", size });
-    rendered.current = true;
+    renderedRef.current = true;
   }, []);
 
   // On a client-side navigation the script is already loaded and onReady

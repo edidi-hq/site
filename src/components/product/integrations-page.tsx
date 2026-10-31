@@ -35,11 +35,11 @@ import { Z_INDEX } from "@/lib/layers";
 
 /**
  * What a webhook can tell you about, in plain words — families of events, not
- * their exact names. The names and payloads are API documentation, given to
- * API customers with their access, not published on a marketing page.
+ * their exact names. The exact names and an example payload for each are API
+ * documentation, which the product serves; a marketing page does not repeat it.
  */
 const WEBHOOK_EVENT_GROUPS: ReadonlyArray<{ name: string; detail: string }> = [
-  { name: "Requests", detail: "Every step from submission to the bank: submitted, queried, returned, approved, sanctioned, ready for the bank — and a payment the bank sends back." },
+  { name: "Payments and orders", detail: "Each step of a payment voucher or purchase order, from submission to the bank: submitted, queried, returned, approved, sanctioned, ready for the bank — and a payment the bank sends back." },
   { name: "People and roles", detail: "Invited, activated, role changed, deactivated, access expired." },
   { name: "Suppliers", detail: "Added, updated, bank details changed, deactivated." },
   { name: "Goods received", detail: "Each goods received note as it is recorded." },
@@ -148,12 +148,11 @@ const CATEGORIES: Category[] = [
     eyebrow: "DEVELOPER PLATFORM",
     title: "Build on top of your approval record.",
     lede:
-      "A read-access REST API exposes your documents, users, vendors, budgets, accounting codes, journal entries, audit events, and reports, with webhooks for every state transition. Each API key permission opens exactly the endpoints it names, and long lists come back a page at a time.",
+      "A read-access REST API exposes your payment vouchers, purchase orders, users, vendors, budgets, accounting codes, journal entries, audit events and spending summaries, with webhooks for each step of a payment or order, changes to people and suppliers, and every entry in your audit trail. Each API key permission opens exactly the endpoints it names, and long lists come back a page at a time.",
     planFeature: "apiAccess",
     integrations: [
-      { name: "REST API (v1)", summary: "Read access to documents, users, vendors, budgets, journal entries, audit events, and reports." },
+      { name: "REST API (v1)", summary: "Read access to vouchers, orders, users, vendors, budgets, journal entries, audit events and spending summaries." },
       { name: "Webhooks", summary: "Per-tenant event subscriptions with retries, signed to the Standard Webhooks scheme." },
-      { name: "Audit export", summary: "Regulator-ready audit bundles, downloadable for any period." },
     ],
   },
 ];
@@ -393,7 +392,7 @@ export function IntegrationsCataloguePage({
                 eyebrowStyle={{
                   marginBottom: "12px",
                 }}
-                title="Every transition is an event you can subscribe to."
+                title="Each step of a payment or order is an event you can subscribe to."
                 titleStyle={{
                   fontWeight: 400,
                   fontSize: "var(--text-heading-xl)",
@@ -404,15 +403,15 @@ export function IntegrationsCataloguePage({
                 titleClassName="lg:!text-heading-3xl"
               />
               <p style={{ fontSize: "var(--text-lg)", color: "var(--color-text-muted)", lineHeight: 1.75, margin: "0 0 16px" }}>
-                Webhooks signed to the Standard Webhooks scheme, versioned
-                schemas, and retries with exponential backoff that keep the same
-                delivery id, so you can safely ignore repeats. Build the notifications your
+                Webhooks signed to the Standard Webhooks scheme, a documented
+                example for every event, and automatic retries with growing gaps
+                that keep the same delivery id, so you can safely ignore repeats. Build the notifications your
                 team actually wants, or sync sanctioned vouchers to your ledger
                 the second the MD signs.
               </p>
               <p style={{ fontSize: "var(--text-md)", color: "var(--color-text-secondary)", lineHeight: 1.7, margin: "0 0 24px" }}>
-                Full API documentation is being finalised for public release.
-                Launch partners get access today.
+                Enterprise administrators open the full API reference from
+                inside the app.
               </p>
               <Link
                 href={contactHref("demo")}

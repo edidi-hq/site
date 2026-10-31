@@ -99,7 +99,7 @@ const STAGE_COPY: Record<
       "Bank-ready payment letter with the MD's signature and your company letterhead",
       "Voucher or PO PDF with the full approval chain printed on the document itself",
       "Once approved, the record is sealed — any later edit or deletion would show when it is verified",
-      "Export any period as a regulator-ready bundle with one click",
+      "Export any period of up to a year as a regulator-ready bundle with one click",
     ],
   },
 };
@@ -138,7 +138,7 @@ const COMPARISON = [
   },
   {
     old: "Quarterly audit means 2 weeks of manual reconciliation and explaining missing records.",
-    withPlatform: "One-click export delivers a regulator-ready bundle for any period. Auditors show up once, leave satisfied.",
+    withPlatform: "One-click export delivers a regulator-ready bundle for any period of up to a year. Auditors show up once, leave satisfied.",
   },
 ];
 

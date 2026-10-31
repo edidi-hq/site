@@ -50,6 +50,7 @@ export function DarkHeroBackdrop({ glows }: DarkHeroBackdropProps) {
   return (
     <>
       {BACKDROP_GLOWS[glows].map((glow, index) => (
+        // eslint-disable-next-line @eslint-react/no-array-index-key -- a fixed decoration list
         <AmbientGlow key={index} {...glow} />
       ))}
     </>
