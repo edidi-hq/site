@@ -48,7 +48,7 @@ const config: ModuleConfig = {
       title: `Reconcile ${BRAND.name} payments into your accounting system`,
       planFeature: "apiAccess",
       body:
-        `When the MD sanctions a voucher, ${BRAND.name} fires a signed webhook carrying the voucher's reference, amount, currency and department. Your integration reads the full voucher from the API and posts it to your accounting system as a bill — no double-entry, no month-end reconciliation gap. Or read the balanced journal entries for approved vouchers and payments straight from the API, coded with your own chart of accounts.`,
+        `When the MD sanctions a voucher, ${BRAND.name} fires a signed webhook carrying the voucher's reference, amount, currency, department and supplier ID. Your integration reads the voucher and the supplier from the API and posts it to your accounting system as a bill — no double-entry, no month-end reconciliation gap. Or read the balanced journal entries for approved vouchers and payments straight from the API, coded with your own chart of accounts.`,
     },
     {
       title: "React to role changes in your own systems",

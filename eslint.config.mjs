@@ -1,6 +1,6 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import eslintReact from "@eslint-react/eslint-plugin";
-import noAnonymousDefaultExport from "../core/src/lint/no-anonymous-default-export.mjs";
+import noAnonymousDefaultExport from "@edidi-hq/core/lint/no-anonymous-default-export";
 import nextPlugin from "@next/eslint-plugin-next";
 import jsxA11y from "eslint-plugin-jsx-a11y-x";
 import reactHooks from "eslint-plugin-react-hooks";
