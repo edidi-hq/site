@@ -91,6 +91,8 @@ const BUILD_FILES = new Set([join("lib", "pricing-fallback-build.ts"), join("dat
 const BUILD_ONLY_ALLOWED = new Set<string>([]);
 const TEST_ONLY_ALLOWED = new Set([
   "security/dependency-floors",
+  // Dependency-free: checks how pnpm-lock.yaml records core's address.
+  "security/core-dependency-source",
   "brand/copy-guardrails",
   // The shared "brand / host never typed" detector and comment stripper; needs only
   // `typescript`, which the site installs.
