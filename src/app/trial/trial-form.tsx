@@ -374,10 +374,10 @@ export function TrialForm({ initialCountry }: { initialCountry: string }) {
         {/* ── Step 1: setup — tappable, already defaulted ─────────────── */}
         <div {...FORM_STEP} style={{ display: step === 1 ? "flex" : "none", flexDirection: "column", gap: "18px" }}>
           <div>
-            <label style={labelStyle}>
+            <span style={labelStyle}>
               Your role
               <span style={{ color: "var(--color-required)", marginLeft: 4 }} aria-hidden="true">*</span>
-            </label>
+            </span>
             <ChoiceGroup
               name="role"
               variant="cards"
@@ -416,7 +416,7 @@ export function TrialForm({ initialCountry }: { initialCountry: string }) {
             </noscript>
             {roleValue === OTHER_TRIAL_ROLE && (
               <div style={{ marginTop: "10px" }}>
-                <label style={labelStyle}>
+                <label htmlFor="roleOther" style={labelStyle}>
                   Specify your role
                   <span style={{ color: "var(--color-required)", marginLeft: 4 }} aria-hidden="true">
                     *
@@ -424,12 +424,12 @@ export function TrialForm({ initialCountry }: { initialCountry: string }) {
                 </label>
                 <input
                   type="text"
+                  id="roleOther"
                   name="roleOther"
                   value={roleOtherValue}
                   maxLength={FORM_LIMITS.otherDetail}
                   onChange={(e) => setRoleOtherValue(e.target.value)}
                   placeholder="Tell us your role"
-                  aria-label="Specify your role"
                   aria-required="true"
                   style={inputStyle}
                 />
@@ -438,10 +438,10 @@ export function TrialForm({ initialCountry }: { initialCountry: string }) {
           </div>
 
           <div>
-            <label style={labelStyle}>
+            <span style={labelStyle}>
               Organisation size
               <span style={{ color: "var(--color-required)", marginLeft: 4 }} aria-hidden="true">*</span>
-            </label>
+            </span>
             <div style={{ marginTop: "8px" }}>
               <ChoiceGroup
                 name="orgSize"
@@ -463,10 +463,10 @@ export function TrialForm({ initialCountry }: { initialCountry: string }) {
           </div>
 
           <div>
-            <label style={labelStyle}>
+            <span style={labelStyle}>
               Industry
               <span style={{ color: "var(--color-required)", marginLeft: 4 }} aria-hidden="true">*</span>
-            </label>
+            </span>
             <SearchableSelect
               name="sector"
               value={sectorValue}
@@ -502,7 +502,7 @@ export function TrialForm({ initialCountry }: { initialCountry: string }) {
             </noscript>
             {sectorValue === "Other" && (
               <div style={{ marginTop: "10px" }}>
-                <label style={labelStyle}>
+                <label htmlFor="sectorOther" style={labelStyle}>
                   Describe your industry
                   <span style={{ color: "var(--color-required)", marginLeft: 4 }} aria-hidden="true">
                     *
@@ -510,6 +510,7 @@ export function TrialForm({ initialCountry }: { initialCountry: string }) {
                 </label>
                 <input
                   type="text"
+                  id="sectorOther"
                   name="sectorOther"
                   value={sectorOtherValue}
                   maxLength={FORM_LIMITS.otherDetail}
@@ -518,7 +519,6 @@ export function TrialForm({ initialCountry }: { initialCountry: string }) {
                     clearFieldError("sector");
                   }}
                   placeholder="Tell us your industry"
-                  aria-label="Describe your industry"
                   aria-required="true"
                   style={inputStyle}
                 />
@@ -527,10 +527,10 @@ export function TrialForm({ initialCountry }: { initialCountry: string }) {
           </div>
 
           <div>
-            <label style={labelStyle}>
+            <span style={labelStyle}>
               Country
               <span style={{ color: "var(--color-required)", marginLeft: 4 }} aria-hidden="true">*</span>
-            </label>
+            </span>
             <SearchableSelect
               name="country"
               value={countryValue}
