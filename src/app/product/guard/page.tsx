@@ -9,7 +9,7 @@ import { moduleName, moduleHref } from "@/lib/brand";
 export const metadata: Metadata = pageMetadata({
   path: moduleHref("guard"),
   title: `${moduleName("guard")} — Catch the bad payment before the money moves`,
-  description: "Real-time flags on the patterns that drain finance teams — duplicate payments, vendor bank-account switches, and threshold-gaming — surfaced before approval, resolved on an audited review queue.",
+  description: "Flags on the patterns that drain finance teams — duplicate payments, vendor bank-account switches, and threshold-gaming — surfaced before approval, resolved on an audited review queue.",
   socialDescription: "Duplicate payments, vendor bank-account changes, and structuring flagged before approval — with an audited review-and-resolve queue.",
 });
 

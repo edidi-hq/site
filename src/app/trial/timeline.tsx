@@ -27,7 +27,7 @@ interface Milestone {
 const MILESTONES: Milestone[] = [
   {
     when: "Today",
-    title: `Full ${TRIAL_PLAN_NAME} features, instantly`,
+    title: `Full ${TRIAL_PLAN_NAME} features from day one`,
     detail: `Full ${TRIAL_PLAN_NAME} features on your own data — a ${TRIAL_SEAT_CAP}-seat pilot workspace, with a sample approval already waiting. ${NO_CARD_REQUIRED}.`,
   },
   {

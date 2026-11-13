@@ -67,11 +67,12 @@ function getHighlights(plan: Plan): string[] {
  * Deltas only — the module scope is the card's badge, and the watermark + grace
  * detail lives in the footnote below the CTA (no repetition).
  */
-function trialHighlights(planName: string, seatCap: number): string[] {
+function trialHighlights(planName: string, seatCap: number, verifiedClaims: readonly string[]): string[] {
   return [
     `Full ${planName} tier — switched on, not a sandbox`,
     `Up to ${seatCap} users, ready to invite`,
-    "Bank-ready PDF exports (trial watermark)",
+    // A capability, so only while it is signed off (`@/lib/verified-claims`).
+    ...(verifiedClaims.includes("pdfExport") ? ["Bank-ready PDF exports (trial watermark)"] : []),
     `${TRIAL_STORAGE} storage during trial`,
   ];
 }
@@ -338,7 +339,7 @@ export function Pricing({ data, headingAs = "h2" }: PricingProps) {
                 flex: 1,
               }}
             >
-              {trialHighlights(trialPlanName, trialSeatCap).map((feature) => (
+              {trialHighlights(trialPlanName, trialSeatCap, data.verifiedClaims ?? []).map((feature) => (
                 <li
                   key={feature}
                   style={{
@@ -689,7 +690,7 @@ export function Pricing({ data, headingAs = "h2" }: PricingProps) {
                     flex: 1,
                   }}
                 >
-                  {inheritFrom && (
+                  {inheritFrom && features.length > 0 && (
                     <li
                       style={{
                         fontWeight: 600,

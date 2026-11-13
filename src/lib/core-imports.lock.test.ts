@@ -44,6 +44,13 @@ import { dirname, join } from "node:path";
  *   - `region/visitor-origin` — the headers a trial call forwards the visitor's
  *     IP and location in, and their parsing, shared with the app that reads
  *     them. Server-only; its one import is `node:net` plus `region/iso-3166`.
+ *   - `auth/session-recheck` + `dates` — the session re-check interval, the
+ *     longest a removed person's session lasts (`ACCESS_ENDS`), and the minute
+ *     it is divided by. Constants and calendar arithmetic; no package imports.
+ *   - `billing/feature-claims` — which capabilities may be advertised and the
+ *     sign-off freshness rule (`isProofFresh`), applied in `fetchPricingData`.
+ *     Value imports reach only `dates`, `modules/catalog`, `modules/early-access`,
+ *     `billing/feature-catalog` and `billing/features` — no package.
  *   - `billing/retention` — the statutory record-retention floor a page states
  *     (the platform floor or the country's own, whichever is longer). Reaches
  *     only `region/countries` and its own floor constant.
@@ -83,6 +90,9 @@ const RUNTIME_ALLOWED = new Set([
   "ui/card-grid",
   "ui/card-grid.css",
   "billing/retention",
+  "billing/feature-claims",
+  "auth/session-recheck",
+  "dates",
   "region/iso-3166",
   "domains/public-email",
   "trial/request-terms",
