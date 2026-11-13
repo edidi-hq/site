@@ -269,8 +269,13 @@ Run these locally before you claim anything is done.
   `notFoundUnlessSignedOff(key, pricingData)` after the fetch (lock-tested), a suite page answers
   not-found with no advertised module, the sitemap (`sitemapFor`) and every module list read the
   same set, and the menus get `advertisedSuiteKeys` from the root layout
-  (`AdvertisedSuitesProvider`; outside it, no suite is linked). Still static: prose that names
-  request types (`requestTypeList`) and the contact form's topics.
+  (`AdvertisedSuitesProvider`; outside it, no suite is linked). Beyond module pages, copy that
+  names a paid capability declares its claims and waits for them: the homepage headline's
+  multi-company line (`HEADLINE_WORDS` in `hero.tsx`), each Integrations section and item
+  (`claims`, lock-tested: never empty, includes `planFeature`) and its summary line, the Security
+  page's paid bullets (`paid(text, …claims)`) and FAQ answers (`signedOffFaqs`, which its JSON-LD
+  reads too), and suite pages' shared points. What every customer gets stays plain text. Still
+  static: prose that names request types (`requestTypeList`) and the contact form's topics.
 - **Never type the brand name.** Copy reads `BRAND.name` (from `@/lib/brand`); a module's
   short name is `moduleShortName(key)` / `moduleShortNameFor(apiModule)`, never a cut prefix.
   `brand-name.lock.test.ts` fails on a typed brand name outside `brand.ts` and the changelog.

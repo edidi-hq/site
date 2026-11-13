@@ -39,7 +39,12 @@ export async function ProductSuiteLayout({ suite }: { suite: ModuleSuite }) {
   const meta = SUITES.find((s) => s.key === suite)!;
   // No sign-off, no page: only signed-off modules are listed, and a suite with
   // none answers not-found (the menus drop it too — `advertisedSuiteKeys`).
-  const moduleKeys = advertisedSuiteModuleKeys(suite, advertisedModuleKeys(await fetchPricingData()));
+  const pricingData = await fetchPricingData();
+  const moduleKeys = advertisedSuiteModuleKeys(suite, advertisedModuleKeys(pricingData));
+  const verifiedClaims = pricingData.verifiedClaims ?? [];
+  const sharedPoints = config.shared.filter((point) =>
+    (point.claims ?? []).every((key) => verifiedClaims.includes(key)),
+  );
   if (moduleKeys.length === 0) notFound();
 
   return (
@@ -98,6 +103,7 @@ export async function ProductSuiteLayout({ suite }: { suite: ModuleSuite }) {
       </section>
 
       {/* ── WHAT THEY SHARE ────────────────────────────────────────── */}
+      {sharedPoints.length > 0 && (
       <section style={{ backgroundColor: "var(--color-bg)", padding: "88px 40px" }}>
         <div style={{ maxWidth: "var(--layout-max-width)", margin: "0 auto" }}>
           <h2
@@ -120,7 +126,7 @@ export async function ProductSuiteLayout({ suite }: { suite: ModuleSuite }) {
               gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
             }}
           >
-            {config.shared.map((point) => {
+            {sharedPoints.map((point) => {
               const Icon = point.icon;
               return (
                 <div
@@ -174,6 +180,7 @@ export async function ProductSuiteLayout({ suite }: { suite: ModuleSuite }) {
           </div>
         </div>
       </section>
+      )}
 
       {/* ── WHAT EACH ONE ADDS ─────────────────────────────────────── */}
       <section style={{ backgroundColor: "var(--color-white)", padding: "88px 40px" }}>

@@ -1,3 +1,4 @@
+import type { ClaimKey } from "@edidi-hq/core/billing/feature-claims";
 import {
   Banknote,
   ClipboardCheck,
@@ -58,6 +59,8 @@ interface SuiteSharedPoint {
   title: string;
   body: string;
   icon: LucideIcon;
+  /** A paid capability the point advertises: shown only once signed off (`@/lib/verified-claims`). */
+  claims?: readonly ClaimKey[];
 }
 
 interface SuitePageConfig {
@@ -185,6 +188,7 @@ export const SUITE_PAGES: Record<ModuleSuite, SuitePageConfig> = {
       {
         icon: ClipboardCheck,
         title: "Export-ready, not export-eventually",
+        claims: ["fullAuditExport"],
         body:
           "A regulator, auditor or board asking for a period gets a complete bundle produced from the live record, rather than a week of screenshots and spreadsheets.",
       },
@@ -215,14 +219,16 @@ export const SUITE_PAGES: Record<ModuleSuite, SuitePageConfig> = {
       {
         icon: Link2,
         title: "Your record, where it needs to go next",
+        claims: ["apiAccess"],
         body:
           "Approved vouchers and payments into your ledger as journal entries, approved orders into the ERP, role changes into the HR system — through signed webhooks, a documented API and ready-to-import files rather than a monthly export somebody assembles by hand.",
       },
       {
         icon: FileLock2,
         title: "Sign-in that matches your policy",
+        claims: ["sso", "mfaPolicy", "ipAllowlist"],
         body:
-          "Single sign-on with your existing identity provider — required, if you choose — one sign-in per person across all your companies, enforced multi-factor policy, and access restricted to the networks you nominate.",
+          "Single sign-on with your existing identity provider — required, if you choose — enforced multi-factor policy, and access restricted to the networks you nominate.",
       },
       {
         icon: Banknote,

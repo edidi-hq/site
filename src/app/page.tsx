@@ -26,7 +26,7 @@ export default async function Home() {
       <JsonLd data={softwareApplicationSchema(pricingData)} />
       <Navbar />
       <main id="main">
-        <Hero />
+        <Hero multiCompanySignedOff={(pricingData.verifiedClaims ?? []).includes("multiCompanyGroup")} />
         <Problem />
         <HowItWorks />
         <SocialProof />
