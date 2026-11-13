@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { isLaunchVisible } from "@/lib/launch";
-import { LEGAL_PAGES, SITE_PAGES, publicModuleKeys, moduleHref, suiteHref, SUITES } from "@/lib/brand";
+import { LEGAL_PAGES, SITE_PAGES, moduleHref, suiteHref } from "@/lib/brand";
+import { fetchPricingData, type PricingData } from "@/lib/pricing";
+import { advertisedModuleKeys, advertisedSuiteKeys } from "@/lib/verified-claims";
 import { SITE_ROUTES } from "@/lib/routes";
 import { SITE_URL } from "@/lib/seo";
 
@@ -38,16 +40,19 @@ export const STATIC_ROUTES: readonly string[] = [
   LEGAL_PAGES.terms,
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  return sitemapFor(await fetchPricingData());
+}
+
+/** The sitemap for a pricing payload: module and suite pages only while advertised. */
+export function sitemapFor(data: PricingData): MetadataRoute.Sitemap {
   const staticRoutes = STATIC_ROUTES;
 
-  const moduleRoutes = publicModuleKeys().map(
-    (key) => moduleHref(key),
-  );
+  const moduleRoutes = advertisedModuleKeys(data).map((key) => moduleHref(key));
 
   // Suite pages are derived too, so a fifth suite is indexed the moment it has
-  // a page rather than whenever somebody remembers this file.
-  const suiteRoutes = SUITES.map((suite) => suiteHref(suite.key));
+  // an advertised module rather than whenever somebody remembers this file.
+  const suiteRoutes = advertisedSuiteKeys(data).map((suite) => suiteHref(suite));
 
   const lastModified = new Date();
 

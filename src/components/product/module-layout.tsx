@@ -178,6 +178,16 @@ function resolveCtas(config: ModuleConfig, status: ModuleStatus): {
 export interface ModulePageData {
   planAvailability: ModulePlan[];
   featurePlans: FeaturePlans;
+  /** Claim keys with a production sign-off (`@/lib/verified-claims`). */
+  verifiedClaims: readonly string[];
+}
+
+/**
+ * The claim a card makes: the plan feature it names, else the page's own
+ * module — a card naming no feature describes the module's core capability.
+ */
+export function cardClaim(item: PlanScoped, moduleKey: ModuleKey): string {
+  return item.planFeature ?? moduleKey;
 }
 
 /** A module page: its own words (`config`) plus the derived `ModulePageData`. */
@@ -185,12 +195,18 @@ export function ProductModuleLayout({
   config,
   planAvailability,
   featurePlans,
+  verifiedClaims,
 }: ModulePageData & { config: ModuleConfig }) {
-  const pillars = withPlanScope(config.pillars, featurePlans, planAvailability);
-  const useCases = withPlanScope(config.useCases, featurePlans, planAvailability);
+  // We advertise only what production is signed off on: a card shows only while its claim is.
+  const isShown = (item: PlanScoped) => verifiedClaims.includes(cardClaim(item, config.moduleKey));
+  const pillars = withPlanScope(config.pillars.filter(isShown), featurePlans, planAvailability);
+  const useCases = withPlanScope(config.useCases.filter(isShown), featurePlans, planAvailability);
   const { name, status } = MODULES[config.moduleKey];
   const { primary, secondary } = resolveCtas(config, status);
-  const relatedModules = config.relatedModules.filter((related) => isModulePublic(related.moduleKey));
+  // A related module is linked only while it is advertised (public and signed off).
+  const relatedModules = config.relatedModules.filter(
+    (related) => isModulePublic(related.moduleKey) && verifiedClaims.includes(related.moduleKey),
+  );
 
   return (
     <>
@@ -288,6 +304,7 @@ export function ProductModuleLayout({
       </section>
 
       {/* ── PILLARS ──────────────────────────────────────────────────── */}
+      {pillars.length > 0 && (
       <section style={{ backgroundColor: "var(--color-white)", padding: "100px 40px", position: "relative", overflow: "hidden", isolation: "isolate" }}>
         <div style={{ maxWidth: "var(--layout-max-width)", margin: "0 auto" }}>
           <SectionIntro
@@ -361,8 +378,10 @@ export function ProductModuleLayout({
           </div>
         </div>
       </section>
+      )}
 
       {/* ── USE CASES ────────────────────────────────────────────────── */}
+      {useCases.length > 0 && (
       <section style={{ backgroundColor: "var(--color-bg)", padding: "100px 40px", position: "relative", overflow: "hidden", isolation: "isolate" }}>
         <div style={{ maxWidth: "var(--layout-max-width)", margin: "0 auto" }}>
           <SectionIntro
@@ -421,6 +440,7 @@ export function ProductModuleLayout({
           </div>
         </div>
       </section>
+      )}
 
       {/* ── PLAN AVAILABILITY + RELATED MODULES ──────────────────────── */}
       <section style={{ backgroundColor: "var(--color-white)", padding: "100px 40px", position: "relative", overflow: "hidden", isolation: "isolate" }}>

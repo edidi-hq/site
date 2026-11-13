@@ -43,7 +43,11 @@ import { featurePlans } from "@/lib/plan-names";
  */
 /** Everything a module route hands its page from the pricing API. */
 export function modulePageData(moduleKey: ModuleKey, data: PricingData): ModulePageData {
-  return { planAvailability: planAvailabilityFor(moduleKey, data), featurePlans: featurePlans(data) };
+  return {
+    planAvailability: planAvailabilityFor(moduleKey, data),
+    featurePlans: featurePlans(data),
+    verifiedClaims: data.verifiedClaims ?? [],
+  };
 }
 
 export function planAvailabilityFor(
@@ -63,7 +67,11 @@ export function planAvailabilityFor(
   const includes = (planKey: string) =>
     isPlatformModule || (planFor(planKey)?.modules.some((m) => m.key === moduleKey) ?? false);
 
-  const notes = MODULE_PLAN_NOTES[moduleKey as ModuleKey] ?? {};
+  // Only signed-off claims are advertised (`@/lib/verified-claims`): a module's
+  // authored notes describe the module, so they need its claim; a feature line
+  // names only features that are signed off.
+  const verified = new Set(data.verifiedClaims ?? []);
+  const notes = verified.has(moduleKey) ? (MODULE_PLAN_NOTES[moduleKey as ModuleKey] ?? {}) : {};
   const rows: ModulePlan[] = [];
 
   // Where the module starts, for the rows that do not include it: "From
@@ -80,7 +88,7 @@ export function planAvailabilityFor(
     : undefined;
   // An unknown key owns nothing — it fails closed to no inclusion and no lines.
   const ownedFeatures: readonly string[] = Object.hasOwn(MODULE_CATALOG, moduleKey)
-    ? MODULE_CATALOG[moduleKey as keyof typeof MODULE_CATALOG].features
+    ? MODULE_CATALOG[moduleKey as keyof typeof MODULE_CATALOG].features.filter((key) => verified.has(key))
     : [];
   const featureLine = (prefix: string, keys: string[]) => {
     const labels = keys.map((key) => data.featureLabels[key]).filter((label): label is string => Boolean(label));
@@ -106,7 +114,7 @@ export function planAvailabilityFor(
     const plan = planFor(key === "trial" ? (data.trial?.plan ?? "") : key);
     const authoredText =
       typeof authored === "function" && plan
-        ? authored({ plan, lowestIncludingPlanName: lowestIncluding?.name ?? "" })
+        ? authored({ plan, lowestIncludingPlanName: lowestIncluding?.name ?? "", verified })
         : typeof authored === "string"
           ? authored
           : undefined;
@@ -157,6 +165,8 @@ export function planAvailabilityFor(
 interface PlanNoteContext {
   plan: Plan;
   lowestIncludingPlanName: string;
+  /** Signed-off claim keys — a note naming another capability checks it. */
+  verified: ReadonlySet<string>;
 }
 
 type PlanNote = string | ((context: PlanNoteContext) => string | undefined);
@@ -175,8 +185,8 @@ const MODULE_PLAN_NOTES: Partial<Record<ModuleKey, Partial<Record<PlanKey | "tri
     starter: ({ lowestIncludingPlanName }) =>
       `Trail still recorded and data-subject requests handled — reporting and exports from ${lowestIncludingPlanName}`,
     // The live SIEM feed rides the API, so it is named only where the plan has it.
-    enterprise: ({ plan }) =>
-      plan.features.apiAccess === true
+    enterprise: ({ plan, verified }) =>
+      plan.features.apiAccess === true && verified.has("apiAccess")
         ? `${retentionLimitLine(plan.limits.documentRetentionDays)}, plus a live SIEM feed through the API`
         : retentionLimitLine(plan.limits.documentRetentionDays),
   },

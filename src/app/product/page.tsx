@@ -12,7 +12,9 @@ import {
   BRAND,
 } from "@/lib/brand";
 import { MODULE_COPY } from "@/lib/module-copy";
-import { suiteModuleKeys } from "@/lib/product-suites";
+import { numberInWords } from "@/lib/number-words";
+import { fetchPricingData } from "@/lib/pricing";
+import { advertisedModuleKeys, advertisedSuiteModuleKeys } from "@/lib/verified-claims";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { CtaBanner } from "@/components/sections/cta-banner";
@@ -32,7 +34,12 @@ export const metadata: Metadata = pageMetadata({
   socialDescription: "Spend, Oversight, Evidence and Infrastructure — four suites sharing one approval engine and one tamper-evident record.",
 });
 
-export default function ProductOverviewPage() {
+export default async function ProductOverviewPage() {
+  // Only signed-off modules are listed (`@/lib/verified-claims`).
+  const advertised = advertisedModuleKeys(await fetchPricingData());
+  // Only suites holding a signed-off module, counted from the data, never typed.
+  const advertisedSuites = SUITES.filter((suite) => advertisedSuiteModuleKeys(suite.key, advertised).length > 0);
+  const suiteCount = numberInWords(advertisedSuites.length);
   return (
     <>
       <Navbar />
@@ -98,13 +105,14 @@ export default function ProductOverviewPage() {
       </section>
 
       {/* ── MODULE GRID ─────────────────────────────────────────────── */}
+      {advertisedSuites.length > 0 && (
       <section style={{ backgroundColor: "var(--color-white)", padding: "100px 40px", position: "relative", overflow: "hidden", isolation: "isolate" }}>
         <div style={{ maxWidth: "var(--layout-max-width)", margin: "0 auto" }}>
           <SectionIntro
             reveal="none"
-            eyebrow="THE FOUR SUITES"
+            eyebrow={`THE ${suiteCount.toUpperCase()} ${advertisedSuites.length === 1 ? "SUITE" : "SUITES"}`}
             eyebrowStyle={{ marginBottom: "12px" }}
-            title="Four suites. Each module in them does one thing, precisely."
+            title={`${suiteCount.charAt(0).toUpperCase()}${suiteCount.slice(1)} ${advertisedSuites.length === 1 ? "suite" : "suites"}. Each module in them does one thing, precisely.`}
             titleStyle={{
               fontWeight: 400,
               fontSize: "var(--text-heading-2xl)",
@@ -116,10 +124,9 @@ export default function ProductOverviewPage() {
             titleClassName="lg:!text-display-sm"
           />
 
-          {SUITES.map((suite) => {
-            const modules = suiteModuleKeys(suite.key);
-            // A suite the site markets nothing in renders nothing — no heading
-            // over an empty row. (None today; true the day one is added.)
+          {advertisedSuites.map((suite) => {
+            const modules = advertisedSuiteModuleKeys(suite.key, advertised);
+            // A suite with nothing signed off renders nothing — no heading over an empty row.
             if (modules.length === 0) return null;
             return (
               <div key={suite.key} style={{ marginBottom: "56px" }}>
@@ -164,6 +171,7 @@ export default function ProductOverviewPage() {
           })}
         </div>
       </section>
+      )}
 
       {/* ── PLATFORM RHYTHM (how modules share the engine) ─────────── */}
       <section style={{ backgroundColor: "var(--color-bg)", padding: "100px 40px", position: "relative", overflow: "hidden", isolation: "isolate" }}>

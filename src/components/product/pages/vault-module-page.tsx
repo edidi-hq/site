@@ -68,7 +68,7 @@ const config: ModuleConfig = {
         "Auditor asks for \"all Q3 approved vouchers.\" Filter by status and date and export the list as a spreadsheet: exactly the period requested, nothing more. Each record's files are one click away, and every one opened is on the audit trail.",
     },
     {
-      title: "Find it in seconds, not hours",
+      title: "One filter away, not a search through folders",
       body:
         "Historical vouchers, purchase orders and invoices are one filter away, even when the person who raised them has left the organisation.",
     },

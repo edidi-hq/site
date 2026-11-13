@@ -9,7 +9,9 @@ import { BrandLogo } from "@/components/ui/logo";
 import { buttonProps } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/section-intro";
 import { BRAND } from "@/lib/brand";
-import { NAV_LINKS, PLATFORM_NAV, SUITE_NAV, TOP_NAV } from "@/lib/site-nav";
+import { NAV_LINKS, PLATFORM_NAV, SUITE_NAV, TOP_NAV, withAdvertisedSuites } from "@/lib/site-nav";
+import { useAdvertisedSuites } from "@/components/providers/advertised-suites-provider";
+
 import { cssTransition } from "@/lib/animations";
 import { SITE_ROUTES } from "@/lib/routes";
 import { Z_INDEX } from "@/lib/layers";
@@ -17,6 +19,7 @@ import { Z_INDEX } from "@/lib/layers";
 /* ── Navbar ───────────────────────────────────────────────────────────────── */
 
 export function Navbar() {
+  const suiteNav = withAdvertisedSuites(SUITE_NAV, useAdvertisedSuites());
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -280,7 +283,7 @@ export function Navbar() {
                         gap: "2px",
                       }}
                     >
-                      {SUITE_NAV.map((suite) => (
+                      {suiteNav.map((suite) => (
                         <Link
                           key={suite.href}
                           href={suite.href}

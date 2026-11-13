@@ -9,14 +9,16 @@ import {
   MODULE_STATUS_LABELS,
   MODULES,
   moduleName,
-  publicModuleKeys,
+  type ModuleKey,
 } from "@/lib/brand";
 import { MODULE_COPY } from "@/lib/module-copy";
 import { cardGridProps } from "@/lib/card-grid";
 import { Z_INDEX } from "@/lib/layers";
 
-export function FeaturesGrid() {
-  const moduleKeys = publicModuleKeys();
+/** `moduleKeys`: the advertised modules (`advertisedModuleKeys`), read on the server. */
+export function FeaturesGrid({ moduleKeys }: { moduleKeys: readonly ModuleKey[] }) {
+  // Nothing signed off yet: no heading over an empty grid.
+  if (moduleKeys.length === 0) return null;
   return (
     <section style={{ backgroundColor: "var(--color-white)", padding: "100px 40px", position: "relative", overflow: "hidden", isolation: "isolate" }}>
       <div style={{ maxWidth: "var(--layout-max-width)", margin: "0 auto", position: "relative", zIndex: Z_INDEX.raised }}>

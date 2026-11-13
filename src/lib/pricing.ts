@@ -57,6 +57,9 @@ export interface Plan {
   /** Curated, short marketing bullets from the product API. Prefer these over
    *  composing features + limits — the product API is the single source of truth. */
   highlights: string[];
+  /** The claim keys each highlight advertises, in the same order (empty for a
+   *  limit or service line). Absent on the fallback and an older API. */
+  highlightClaims?: string[][];
   /**
    * Can this tier be bought with a card, or does it need a sales conversation?
    *
@@ -130,12 +133,20 @@ export interface PricingData {
   /** The order the module suites are shown in (e.g. spend, oversight, …).
    *  Optional — absent on an older fallback or API. */
   suiteOrder?: string[];
+  /** When each capability was last signed off as working on production, by
+   *  claim key (ISO instants). Absent on the fallback and an older API — then
+   *  nothing that needs a sign-off is shown (`@/lib/verified-claims`). */
+  claims?: Record<string, string>;
+  /** DERIVED by `fetchPricingData`, never sent: the claim keys whose sign-off
+   *  holds at render time. Read by the module pages' capability cards. */
+  verifiedClaims?: string[];
 }
 
 
 import { cache } from "react";
 
 import fallback from "@/data/pricing-fallback.json";
+import { withVerifiedClaimsOnly } from "@/lib/verified-claims";
 
 /** Every payload the page renders — live or fallback — shows service
  *  commitments as their own comparison group (see `@/lib/service-commitments`).
@@ -143,7 +154,7 @@ import fallback from "@/data/pricing-fallback.json";
  *  signal, which opts it out of Next's own fetch de-duplication, so a page and
  *  its metadata would otherwise each make the call. */
 export const fetchPricingData = cache(async (): Promise<PricingData> => {
-  return withServiceCommitmentGroup(await fetchRawPricingData());
+  return withVerifiedClaimsOnly(withServiceCommitmentGroup(await fetchRawPricingData()), new Date());
 });
 
 async function fetchRawPricingData(): Promise<PricingData> {

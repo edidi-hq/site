@@ -45,7 +45,7 @@ Run these locally before you claim anything is done.
 - **Runtime code imports only `@edidi-hq/core/brand`, `@edidi-hq/core/region/countries`,
   `@edidi-hq/core/security/rate-limit`, `@edidi-hq/core/security/rate-limit-tiers` and the
   pure slices `billing/trial-deadlines`, `billing/capacity`, `billing/catalog`,
-  `billing/limit-format`, `money/format`, `money/types`, `billing/features`, `billing/platform-tax`, `region/sales-tax`, `billing/reserved-mail-domain`, `billing/retention`, `locales`, `sectors`, `modules/catalog`, `region/iso-3166`, `region/visitor-origin`, `domains/public-email`, `trial/request-terms` and `ui/card-grid` (+ its stylesheet, imported by `globals.css`).**
+  `billing/limit-format`, `money/format`, `money/types`, `billing/features`, `billing/platform-tax`, `region/sales-tax`, `billing/reserved-mail-domain`, `billing/retention`, `billing/feature-claims`, `auth/session-recheck`, `dates`, `locales`, `sectors`, `modules/catalog`, `region/iso-3166`, `region/visitor-origin`, `domains/public-email`, `trial/request-terms` and `ui/card-grid` (+ its stylesheet, imported by `globals.css`).**
   Every other subpath of that package needs peer dependencies this repo does not install
   (`region/countries` has type-only imports; `region/phone` needs a phone library the site does
   not install, so subpaths are admitted one by one; the two rate-limit modules need only the
@@ -254,6 +254,28 @@ Run these locally before you claim anything is done.
   summary from `MODULE_COPY` (`src/lib/module-copy.ts`); a sentence naming request types
   uses `requestTypeList()`. `module-names.lock.test.ts` fails on a file that lists four or
   more modules by hand.
+- **We advertise only what production is signed off on.** A capability claim shows only while a
+  platform operator has signed off that it works on production, until withdrawn (core
+  `isSignedOff`; no expiry); the dates arrive in the pricing API's `claims`. `withVerifiedClaimsOnly`
+  (`src/lib/verified-claims.ts`), run once in `fetchPricingData`, drops unsigned comparison rows
+  and plan bullets (each bullet's keys: `highlightClaims`; the offline fallback declares them in
+  `src/data/plan-copy.ts` and carries no sign-offs, so an outage hides claims). Module-page cards
+  show only when `cardClaim` (`planFeature`, else the module) is signed off; availability notes
+  name only signed-off features and need the module's sign-off. Never lower a feature's maturity
+  to hide a claim (that switches it off for customers). Absolutes ("real-time", "instantly", "in
+  seconds", a guarantee) fail `unprovable-claims.lock.test.ts` unless allowlisted there with a
+  reason. **No sign-off, no page:** a module is advertised only while `brand.ts` shows it AND its
+  own claim is signed off (`advertisedModuleKeys`); every module route calls
+  `notFoundUnlessSignedOff(key, pricingData)` after the fetch (lock-tested), a suite page answers
+  not-found with no advertised module, the sitemap (`sitemapFor`) and every module list read the
+  same set, and the menus get `advertisedSuiteKeys` from the root layout
+  (`AdvertisedSuitesProvider`; outside it, no suite is linked). Beyond module pages, copy that
+  names a paid capability declares its claims and waits for them: the homepage headline's
+  multi-company line (`HEADLINE_WORDS` in `hero.tsx`), each Integrations section and item
+  (`claims`, lock-tested: never empty, includes `planFeature`) and its summary line, the Security
+  page's paid bullets (`paid(text, …claims)`) and FAQ answers (`signedOffFaqs`, which its JSON-LD
+  reads too), and suite pages' shared points. What every customer gets stays plain text. Still
+  static: prose that names request types (`requestTypeList`) and the contact form's topics.
 - **Never type the brand name.** Copy reads `BRAND.name` (from `@/lib/brand`); a module's
   short name is `moduleShortName(key)` / `moduleShortNameFor(apiModule)`, never a cut prefix.
   `brand-name.lock.test.ts` fails on a typed brand name outside `brand.ts` and the changelog.

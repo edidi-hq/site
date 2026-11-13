@@ -35,10 +35,25 @@ interface PlanCopyInput {
   documentRetentionDays: number;
 }
 
+/**
+ * One plan-card bullet and the capability claims it makes (core `ClaimKey`s;
+ * none for a limit, storage or service line). The page shows a bullet only
+ * while every claim is signed off (`@/lib/verified-claims`), so offline the
+ * fact lines stay and the capability lines go. Same declarations as the app's
+ * `planHighlightItems`.
+ */
+interface PlanHighlight {
+  text: string;
+  claims: readonly string[];
+}
+
 interface PlanCopy {
   description: (input: PlanCopyInput) => string;
-  highlights: (input: PlanCopyInput) => string[];
+  highlights: (input: PlanCopyInput) => PlanHighlight[];
 }
+
+/** A limit, storage or service line: a fact, not a capability claim. */
+const fact = (text: string): PlanHighlight => ({ text, claims: [] });
 
 /** "Up to 10 users" → "up to 10 users", for the middle of a sentence. */
 function inSentence(line: string): string {
@@ -60,37 +75,40 @@ export const PLAN_COPY: Readonly<Record<PlanKey, PlanCopy>> = {
     description: ({ capacity }) =>
       `Payments and procurement for growing teams — ${inSentence(userLimitLine(capacity.maxUsers))}`,
     highlights: (input) => [
-      userLimitLine(input.capacity.maxUsers),
-      documentLimitLine(input.capacity.maxDocumentsPerMonth),
-      "Bank-ready exports (PDF & spreadsheet)",
-      "WhatsApp & email alerts",
-      storageAndRetention(input),
+      fact(userLimitLine(input.capacity.maxUsers)),
+      fact(documentLimitLine(input.capacity.maxDocumentsPerMonth)),
+      { text: "Bank-ready exports (PDF & spreadsheet)", claims: ["pdfExport", "csvExport", "bankExport"] },
+      { text: "WhatsApp & email alerts", claims: ["approvalChain"] },
+      fact(storageAndRetention(input)),
     ],
   },
   business: {
     description: ({ capacity }) =>
       `Complete operations with compliance and analytics — ${inSentence(userLimitLine(capacity.maxUsers))}`,
     highlights: (input) => [
-      userLimitLine(input.capacity.maxUsers),
-      "Full compliance audit trail",
-      `Anomaly and control flags (${moduleLabel("guard")})`,
-      `Grant & restricted-fund tracking (${moduleLabel("grants")})`,
-      "Custom approval chains & branding",
-      "Analytics, recurring templates, delegation",
-      storageAndRetention(input),
-      "Priority support",
+      fact(userLimitLine(input.capacity.maxUsers)),
+      { text: "Full compliance audit trail", claims: ["fullAuditTrail"] },
+      { text: `Anomaly and control flags (${moduleLabel("guard")})`, claims: ["guard"] },
+      { text: `Grant & restricted-fund tracking (${moduleLabel("grants")})`, claims: ["grants"] },
+      { text: "Custom approval chains & branding", claims: ["customApprovalChains", "customBranding"] },
+      { text: "Analytics, recurring templates, delegation", claims: ["analytics", "recurringTemplates", "delegation"] },
+      fact(storageAndRetention(input)),
+      fact("Priority support"),
     ],
   },
   enterprise: {
     description: () => "Unlimited scale, dedicated support, and full platform access",
     highlights: (input) => [
-      userLimitLine(input.capacity.maxUsers),
-      "See and export across all your companies in one view (read-only)",
-      storageAndRetention(input),
-      "Employee expense requests",
-      "Single sign-on (SSO/SCIM) & advanced approvals",
-      "API access for custom integrations",
-      "Dedicated onboarding & priority support",
+      fact(userLimitLine(input.capacity.maxUsers)),
+      {
+        text: "See and export across all your companies in one view (read-only)",
+        claims: ["multiCompanyGroup", "groupAdminDashboard"],
+      },
+      fact(storageAndRetention(input)),
+      { text: "Employee expense requests", claims: ["people"] },
+      { text: "Single sign-on (SSO/SCIM) & advanced approvals", claims: ["sso", "advancedApprovalWorkflows"] },
+      { text: "API access for custom integrations", claims: ["apiAccess"] },
+      fact("Dedicated onboarding & priority support"),
     ],
   },
 };

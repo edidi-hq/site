@@ -19,7 +19,10 @@ import Link from "next/link";
 
 import { SUITES, moduleHref, suiteHref, moduleName, moduleShortName, type ModuleSuite } from "@/lib/brand";
 import { MODULE_COPY } from "@/lib/module-copy";
-import { SUITE_PAGES, suiteModuleKeys } from "@/lib/product-suites";
+import { notFound } from "next/navigation";
+import { SUITE_PAGES } from "@/lib/product-suites";
+import { fetchPricingData } from "@/lib/pricing";
+import { advertisedModuleKeys, advertisedSuiteModuleKeys } from "@/lib/verified-claims";
 import { JsonLd, breadcrumbSchema } from "@/lib/seo";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
@@ -31,10 +34,18 @@ import { SITE_ROUTES } from "@/lib/routes";
 import { cssTransition } from "@/lib/animations";
 import { Z_INDEX } from "@/lib/layers";
 
-export function ProductSuiteLayout({ suite }: { suite: ModuleSuite }) {
+export async function ProductSuiteLayout({ suite }: { suite: ModuleSuite }) {
   const config = SUITE_PAGES[suite];
   const meta = SUITES.find((s) => s.key === suite)!;
-  const moduleKeys = suiteModuleKeys(suite);
+  // No sign-off, no page: only signed-off modules are listed, and a suite with
+  // none answers not-found (the menus drop it too — `advertisedSuiteKeys`).
+  const pricingData = await fetchPricingData();
+  const moduleKeys = advertisedSuiteModuleKeys(suite, advertisedModuleKeys(pricingData));
+  const verifiedClaims = pricingData.verifiedClaims ?? [];
+  const sharedPoints = config.shared.filter((point) =>
+    (point.claims ?? []).every((key) => verifiedClaims.includes(key)),
+  );
+  if (moduleKeys.length === 0) notFound();
 
   return (
     <>
@@ -92,6 +103,7 @@ export function ProductSuiteLayout({ suite }: { suite: ModuleSuite }) {
       </section>
 
       {/* ── WHAT THEY SHARE ────────────────────────────────────────── */}
+      {sharedPoints.length > 0 && (
       <section style={{ backgroundColor: "var(--color-bg)", padding: "88px 40px" }}>
         <div style={{ maxWidth: "var(--layout-max-width)", margin: "0 auto" }}>
           <h2
@@ -114,7 +126,7 @@ export function ProductSuiteLayout({ suite }: { suite: ModuleSuite }) {
               gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
             }}
           >
-            {config.shared.map((point) => {
+            {sharedPoints.map((point) => {
               const Icon = point.icon;
               return (
                 <div
@@ -168,6 +180,7 @@ export function ProductSuiteLayout({ suite }: { suite: ModuleSuite }) {
           </div>
         </div>
       </section>
+      )}
 
       {/* ── WHAT EACH ONE ADDS ─────────────────────────────────────── */}
       <section style={{ backgroundColor: "var(--color-white)", padding: "88px 40px" }}>

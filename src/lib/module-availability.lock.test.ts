@@ -109,4 +109,13 @@ describe("product module pages — plan availability stays derived", () => {
       .map(([moduleKey]) => moduleKey);
     expect(unguarded, "routes missing notFoundUnlessPublic(<their own key>)").toEqual([]);
   });
+
+  it("every module route answers not-found without a production sign-off", () => {
+    // No sign-off, no page (`@/lib/verified-claims`): the static switch alone
+    // would serve a module nobody has checked works on production.
+    const unsigned = moduleRoutes()
+      .filter(([moduleKey, source]) => !source.includes(`notFoundUnlessSignedOff("${moduleKey}", pricingData)`))
+      .map(([moduleKey]) => moduleKey);
+    expect(unsigned, "routes missing notFoundUnlessSignedOff(<their own key>, pricingData)").toEqual([]);
+  });
 });

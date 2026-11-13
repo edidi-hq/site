@@ -1,3 +1,5 @@
+import { SESSION_RECHECK_INTERVAL_MS } from "@edidi-hq/core/auth/session-recheck";
+import { MINUTE_MS } from "@edidi-hq/core/dates";
 import type { DataProtectionLaw } from "@edidi-hq/core/region/countries";
 
 import { formatEnglishList } from "@/lib/english-list";
@@ -107,5 +109,10 @@ export const TRUST_SIGNALS = {
   dataProtection: `Designed for ${DESIGNED_FOR_LAWS}`,
 } as const;
 
-/** How fast a removed person's sessions end — role change, deactivation, password change or a directory marking them inactive. */
-export const ACCESS_ENDS = "within seconds";
+/**
+ * How fast a removed person's sessions end — role change, deactivation, password change or a
+ * directory marking them inactive. The longest path, not the usual one: a change is refused at
+ * once, but a session that only reads keeps going until core's session re-check, so the figure
+ * is that interval, read from core.
+ */
+export const ACCESS_ENDS = `within ${SESSION_RECHECK_INTERVAL_MS / MINUTE_MS} minutes`;
