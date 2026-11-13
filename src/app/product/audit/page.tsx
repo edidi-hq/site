@@ -3,7 +3,7 @@ import { AuditModulePage } from "@/components/product/pages/audit-module-page";
 import { fetchPricingData } from "@/lib/pricing";
 import { modulePageData } from "@/lib/module-availability";
 import { pageMetadata } from "@/lib/seo";
-import { notFoundUnlessPublic } from "@/lib/module-route";
+import { notFoundUnlessPublic, notFoundUnlessSignedOff } from "@/lib/module-route";
 import { moduleName, moduleHref } from "@/lib/brand";
 import { TRAIL_SEALED } from "@/lib/record-keeping";
 
@@ -17,5 +17,6 @@ export const metadata: Metadata = pageMetadata({
 export default async function ProductAuditPage() {
   notFoundUnlessPublic("audit");
   const pricingData = await fetchPricingData();
+  notFoundUnlessSignedOff("audit", pricingData);
   return <AuditModulePage {...modulePageData("audit", pricingData)} />;
 }

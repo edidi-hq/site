@@ -10,12 +10,15 @@
  * highlight bullets, and records the fresh keys as `verifiedClaims` for the
  * module pages' capability cards (`module-layout.tsx`).
  *
- * Not gated here: whether a whole module is shown — that is `brand.ts`'s
- * visibility switch (menus, sitemap and suite pages read it). A module whose
- * own claim is not signed off shows no capability cards that rely on it.
+ * A whole module follows the same rule: no sign-off, no page. A module is
+ * advertised only while `brand.ts` shows it AND its own claim is signed off
+ * (`advertisedModuleKeys`); a suite only while it holds an advertised module
+ * (`advertisedSuiteKeys`). Its page, its links, its sitemap entry and the lists
+ * that name it all read these, so they cannot disagree.
  */
 import { isProofFresh } from "@edidi-hq/core/billing/feature-claims";
 
+import { MODULE_ORDER, SUITES, moduleSuite, publicModuleKeys, type ModuleKey, type ModuleSuite } from "@/lib/brand";
 import type { PricingData } from "@/lib/pricing";
 import { SERVICE_GROUP_KEY } from "@/lib/service-commitments";
 
@@ -52,4 +55,23 @@ export function withVerifiedClaimsOnly(data: PricingData, now: Date): PricingDat
     return { ...plan, highlights };
   });
   return { ...data, plans, featureGroups, verifiedClaims: verified };
+}
+
+/** Modules the site advertises: shown by `brand.ts` and signed off. Display order. */
+export function advertisedModuleKeys(data: PricingData): ModuleKey[] {
+  const verified = new Set(data.verifiedClaims ?? []);
+  return publicModuleKeys().filter((key) => verified.has(key));
+}
+
+/** The advertised modules of one suite, in the site's display order. */
+export function advertisedSuiteModuleKeys(suite: ModuleSuite, advertised: readonly ModuleKey[]): ModuleKey[] {
+  return MODULE_ORDER.filter((key) => advertised.includes(key) && moduleSuite(key) === suite);
+}
+
+/** Suites with at least one advertised module — the only ones the menus link to. */
+export function advertisedSuiteKeys(data: PricingData): ModuleSuite[] {
+  const advertised = advertisedModuleKeys(data);
+  return SUITES.map((suite) => suite.key).filter(
+    (suite) => advertisedSuiteModuleKeys(suite, advertised).length > 0,
+  );
 }

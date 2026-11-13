@@ -3,7 +3,7 @@ import { GrantsModulePage } from "@/components/product/pages/grants-module-page"
 import { fetchPricingData } from "@/lib/pricing";
 import { modulePageData } from "@/lib/module-availability";
 import { pageMetadata } from "@/lib/seo";
-import { notFoundUnlessPublic } from "@/lib/module-route";
+import { notFoundUnlessPublic, notFoundUnlessSignedOff } from "@/lib/module-route";
 import { moduleName, moduleHref } from "@/lib/brand";
 
 export const metadata: Metadata = pageMetadata({
@@ -16,5 +16,6 @@ export const metadata: Metadata = pageMetadata({
 export default async function ProductGrantsPage() {
   notFoundUnlessPublic("grants");
   const pricingData = await fetchPricingData();
+  notFoundUnlessSignedOff("grants", pricingData);
   return <GrantsModulePage {...modulePageData("grants", pricingData)} />;
 }

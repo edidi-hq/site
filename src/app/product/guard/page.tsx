@@ -3,7 +3,7 @@ import { GuardModulePage } from "@/components/product/pages/guard-module-page";
 import { fetchPricingData } from "@/lib/pricing";
 import { modulePageData } from "@/lib/module-availability";
 import { pageMetadata } from "@/lib/seo";
-import { notFoundUnlessPublic } from "@/lib/module-route";
+import { notFoundUnlessPublic, notFoundUnlessSignedOff } from "@/lib/module-route";
 import { moduleName, moduleHref } from "@/lib/brand";
 
 export const metadata: Metadata = pageMetadata({
@@ -16,5 +16,6 @@ export const metadata: Metadata = pageMetadata({
 export default async function ProductGuardPage() {
   notFoundUnlessPublic("guard");
   const pricingData = await fetchPricingData();
+  notFoundUnlessSignedOff("guard", pricingData);
   return <GuardModulePage {...modulePageData("guard", pricingData)} />;
 }

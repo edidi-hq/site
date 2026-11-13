@@ -203,7 +203,10 @@ export function ProductModuleLayout({
   const useCases = withPlanScope(config.useCases.filter(isShown), featurePlans, planAvailability);
   const { name, status } = MODULES[config.moduleKey];
   const { primary, secondary } = resolveCtas(config, status);
-  const relatedModules = config.relatedModules.filter((related) => isModulePublic(related.moduleKey));
+  // A related module is linked only while it is advertised (public and signed off).
+  const relatedModules = config.relatedModules.filter(
+    (related) => isModulePublic(related.moduleKey) && verifiedClaims.includes(related.moduleKey),
+  );
 
   return (
     <>

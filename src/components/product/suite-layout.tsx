@@ -19,7 +19,10 @@ import Link from "next/link";
 
 import { SUITES, moduleHref, suiteHref, moduleName, moduleShortName, type ModuleSuite } from "@/lib/brand";
 import { MODULE_COPY } from "@/lib/module-copy";
-import { SUITE_PAGES, suiteModuleKeys } from "@/lib/product-suites";
+import { notFound } from "next/navigation";
+import { SUITE_PAGES } from "@/lib/product-suites";
+import { fetchPricingData } from "@/lib/pricing";
+import { advertisedModuleKeys, advertisedSuiteModuleKeys } from "@/lib/verified-claims";
 import { JsonLd, breadcrumbSchema } from "@/lib/seo";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
@@ -31,10 +34,13 @@ import { SITE_ROUTES } from "@/lib/routes";
 import { cssTransition } from "@/lib/animations";
 import { Z_INDEX } from "@/lib/layers";
 
-export function ProductSuiteLayout({ suite }: { suite: ModuleSuite }) {
+export async function ProductSuiteLayout({ suite }: { suite: ModuleSuite }) {
   const config = SUITE_PAGES[suite];
   const meta = SUITES.find((s) => s.key === suite)!;
-  const moduleKeys = suiteModuleKeys(suite);
+  // No sign-off, no page: only signed-off modules are listed, and a suite with
+  // none answers not-found (the menus drop it too — `advertisedSuiteKeys`).
+  const moduleKeys = advertisedSuiteModuleKeys(suite, advertisedModuleKeys(await fetchPricingData()));
+  if (moduleKeys.length === 0) notFound();
 
   return (
     <>

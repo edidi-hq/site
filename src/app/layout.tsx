@@ -3,6 +3,9 @@ import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { MotionProvider } from "@/components/providers/motion-provider";
+import { AdvertisedSuitesProvider } from "@/components/providers/advertised-suites-provider";
+import { fetchPricingData } from "@/lib/pricing";
+import { advertisedSuiteKeys } from "@/lib/verified-claims";
 import { BRAND } from "@/lib/brand";
 import { JsonLd, organizationSchema } from "@/lib/seo";
 import { AUDIT_TRAIL_KEPT, SITE_DESCRIPTION } from "@/lib/record-keeping";
@@ -64,11 +67,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // The menus link only to suites with a signed-off module (`@/lib/verified-claims`).
+  const advertisedSuites = advertisedSuiteKeys(await fetchPricingData());
   return (
     <html
       lang="en"
@@ -88,8 +93,10 @@ export default function RootLayout({
           Skip to content
         </a>
         <MotionProvider>
-          <ScrollProgress />
-          {children}
+          <AdvertisedSuitesProvider suites={advertisedSuites}>
+            <ScrollProgress />
+            {children}
+          </AdvertisedSuitesProvider>
         </MotionProvider>
       </body>
     </html>

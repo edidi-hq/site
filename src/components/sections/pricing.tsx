@@ -119,15 +119,17 @@ export function Pricing({ data, headingAs = "h2" }: PricingProps) {
   // every plan" trust line. NOT Compliance/Integrations — those are tier-gated
   // paid modules and appear as badges. Empty on a stale/pre-deploy API → the
   // strip falls back to generic always-on copy (no module over-claim).
-  const platformNames = (data.platformModules ?? []).map((m) =>
-    moduleShortNameFor(m),
-  );
+  const verifiedClaims = data.verifiedClaims ?? [];
+  const platformNames = (data.platformModules ?? [])
+    .filter((m) => verifiedClaims.includes(m.key))
+    .map((m) => moduleShortNameFor(m));
 
   // A module badge shows a plan's publicly-marketed modules from the API's
   // per-plan `modules` (the real tier entitlement — includes tier-gated
   // Compliance/Integrations). `isModulePublic` only drops what the site doesn't
-  // market (Requests) + unknown keys.
-  const isBadgeModule = (key: string) => isModulePublic(key);
+  // market (Requests) + unknown keys; a module without a production sign-off is
+  // not advertised either (`@/lib/verified-claims`).
+  const isBadgeModule = (key: string) => isModulePublic(key) && verifiedClaims.includes(key);
   const publicPlanModules = (p: Plan) =>
     p.modules.filter((m) => isBadgeModule(m.key));
   // Sector qualifiers for the badge above. A module the API marks

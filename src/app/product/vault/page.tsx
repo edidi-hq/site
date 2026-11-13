@@ -4,7 +4,7 @@ import { fetchPricingData } from "@/lib/pricing";
 import { modulePageData } from "@/lib/module-availability";
 import { pageMetadata } from "@/lib/seo";
 import { DOCUMENTS_KEPT } from "@/lib/record-keeping";
-import { notFoundUnlessPublic } from "@/lib/module-route";
+import { notFoundUnlessPublic, notFoundUnlessSignedOff } from "@/lib/module-route";
 import { moduleName, moduleHref } from "@/lib/brand";
 
 export const metadata: Metadata = pageMetadata({
@@ -17,5 +17,6 @@ export const metadata: Metadata = pageMetadata({
 export default async function ProductVaultPage() {
   notFoundUnlessPublic("vault");
   const pricingData = await fetchPricingData();
+  notFoundUnlessSignedOff("vault", pricingData);
   return <VaultModulePage {...modulePageData("vault", pricingData)} />;
 }

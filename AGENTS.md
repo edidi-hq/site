@@ -264,7 +264,13 @@ Run these locally before you claim anything is done.
   name only signed-off features and need the module's sign-off. Never lower a feature's maturity
   to hide a claim (that switches it off for customers). Absolutes ("real-time", "instantly", "in
   seconds", a guarantee) fail `unprovable-claims.lock.test.ts` unless allowlisted there with a
-  reason. NOT gated yet: a module page's hero and the module's links (`brand.ts` visibility).
+  reason. **No sign-off, no page:** a module is advertised only while `brand.ts` shows it AND its
+  own claim is signed off (`advertisedModuleKeys`); every module route calls
+  `notFoundUnlessSignedOff(key, pricingData)` after the fetch (lock-tested), a suite page answers
+  not-found with no advertised module, the sitemap (`sitemapFor`) and every module list read the
+  same set, and the menus get `advertisedSuiteKeys` from the root layout
+  (`AdvertisedSuitesProvider`; outside it, no suite is linked). Still static: prose that names
+  request types (`requestTypeList`) and the contact form's topics.
 - **Never type the brand name.** Copy reads `BRAND.name` (from `@/lib/brand`); a module's
   short name is `moduleShortName(key)` / `moduleShortNameFor(apiModule)`, never a cut prefix.
   `brand-name.lock.test.ts` fails on a typed brand name outside `brand.ts` and the changelog.

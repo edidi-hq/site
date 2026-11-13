@@ -245,9 +245,10 @@ export const SUITE_PAGES: Record<ModuleSuite, SuitePageConfig> = {
 };
 
 /**
- * Public modules in a suite, in the site's display order.
- * Filters MODULE_ORDER, not `Object.keys(MODULES)` — object key order is not
- * the display contract, and the two differ.
+ * Every module `brand.ts` shows in a suite, signed off or not — the set a suite
+ * must have words for. What a page lists is `advertisedSuiteModuleKeys`
+ * (`@/lib/verified-claims`). Filters MODULE_ORDER, not `Object.keys(MODULES)` —
+ * object key order is not the display contract, and the two differ.
  */
 export function suiteModuleKeys(suite: ModuleSuite): ModuleKey[] {
   return MODULE_ORDER.filter((key) => isModulePublic(key) && moduleSuite(key) === suite);

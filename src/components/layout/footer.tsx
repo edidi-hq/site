@@ -4,7 +4,9 @@ import Link from "next/link";
 import { BrandLogo } from "@/components/ui/logo";
 import { Eyebrow } from "@/components/ui/section-intro";
 import { BRAND } from "@/lib/brand";
-import { FOOTER_COLUMNS } from "@/lib/site-nav";
+import { FOOTER_COLUMNS, withAdvertisedSuites } from "@/lib/site-nav";
+import { useAdvertisedSuites } from "@/components/providers/advertised-suites-provider";
+
 import { MARKET_SCOPE } from "@/lib/market";
 import { cssTransition } from "@/lib/animations";
 
@@ -41,6 +43,7 @@ function FooterColumn({ label, links }: { label: string; links: { label: string;
 }
 
 export function Footer() {
+  const advertisedSuites = useAdvertisedSuites();
   return (
     <footer
       style={{
@@ -90,9 +93,11 @@ export function Footer() {
             </span>
           </div>
 
-          {FOOTER_COLUMNS.map((col) => (
-            <FooterColumn key={col.label} label={col.label} links={col.links} />
-          ))}
+          {FOOTER_COLUMNS.map((col) => ({ ...col, links: withAdvertisedSuites(col.links, advertisedSuites) }))
+            .filter((col) => col.links.length > 0)
+            .map((col) => (
+              <FooterColumn key={col.label} label={col.label} links={col.links} />
+            ))}
         </div>
 
         {/* Bottom bar */}
