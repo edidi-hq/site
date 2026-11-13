@@ -255,8 +255,8 @@ Run these locally before you claim anything is done.
   uses `requestTypeList()`. `module-names.lock.test.ts` fails on a file that lists four or
   more modules by hand.
 - **We advertise only what production is signed off on.** A capability claim shows only while a
-  platform operator's sign-off that it works on production is fresh (core `isProofFresh`, 90
-  days); the dates arrive in the pricing API's `claims`. `withVerifiedClaimsOnly`
+  platform operator has signed off that it works on production, until withdrawn (core
+  `isSignedOff`; no expiry); the dates arrive in the pricing API's `claims`. `withVerifiedClaimsOnly`
   (`src/lib/verified-claims.ts`), run once in `fetchPricingData`, drops unsigned comparison rows
   and plan bullets (each bullet's keys: `highlightClaims`; the offline fallback declares them in
   `src/data/plan-copy.ts` and carries no sign-offs, so an outage hides claims). Module-page cards

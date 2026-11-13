@@ -1,13 +1,13 @@
 /**
  * We advertise only what we verifiably sell: a capability claim shows only
- * while a platform operator's sign-off that it works ON PRODUCTION is fresh
- * (core `isProofFresh`, 90 days). The sign-off dates arrive in the pricing
+ * once a platform operator has signed off that it works ON PRODUCTION, until
+ * someone withdraws it (core `isSignedOff`; no expiry). The sign-off dates arrive in the pricing
  * API's `claims`; the site's offline fallback never carries any, so an outage
  * hides claims rather than showing unproven ones.
  *
  * Applied ONCE, server-side, in `fetchPricingData` (one clock, no hydration
  * disagreement): it filters the comparison table's feature rows and each plan's
- * highlight bullets, and records the fresh keys as `verifiedClaims` for the
+ * highlight bullets, and records the signed-off keys as `verifiedClaims` for the
  * module pages' capability cards (`module-layout.tsx`).
  *
  * A whole module follows the same rule: no sign-off, no page. A module is
@@ -16,29 +16,29 @@
  * (`advertisedSuiteKeys`). Its page, its links, its sitemap entry and the lists
  * that name it all read these, so they cannot disagree.
  */
-import { isProofFresh } from "@edidi-hq/core/billing/feature-claims";
+import { isSignedOff } from "@edidi-hq/core/billing/feature-claims";
 
 import { MODULE_ORDER, SUITES, moduleSuite, publicModuleKeys, type ModuleKey, type ModuleSuite } from "@/lib/brand";
 import type { PricingData } from "@/lib/pricing";
 import { SERVICE_GROUP_KEY } from "@/lib/service-commitments";
 
-/** The claim keys whose sign-off is fresh at `now`. */
-export function freshClaimKeys(claims: PricingData["claims"], now: Date): string[] {
+/** The claim keys signed off (and not withdrawn) at `now`. */
+export function signedOffClaimKeys(claims: PricingData["claims"], now: Date): string[] {
   return Object.entries(claims ?? {})
-    .filter(([, verifiedAt]) => isProofFresh(verifiedAt, now))
+    .filter(([, verifiedAt]) => isSignedOff(verifiedAt, now))
     .map(([key]) => key)
     .sort();
 }
 
 /**
  * The payload with only signed-off claims left in it: comparison rows for
- * features without a fresh sign-off removed (the service group is people's
+ * features without a sign-off removed (the service group is people's
  * promises, not product claims, and stays), groups left empty dropped, and each
- * highlight kept only when every claim it declares is fresh. A highlight whose
+ * highlight kept only when every claim it declares is signed off. A highlight whose
  * claims are unknown (an older API, the fallback) is dropped — fail closed.
  */
 export function withVerifiedClaimsOnly(data: PricingData, now: Date): PricingData {
-  const verified = freshClaimKeys(data.claims, now);
+  const verified = signedOffClaimKeys(data.claims, now);
   const isVerified = (key: string) => verified.includes(key);
   const featureGroups = data.featureGroups
     ?.map((group) =>

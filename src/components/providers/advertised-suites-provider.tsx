@@ -5,7 +5,7 @@ import { createContext, use } from "react";
 import type { ModuleSuite } from "@/lib/brand";
 
 /**
- * The suites the menus may link to: those holding a module with a fresh
+ * The suites the menus may link to: those holding a module with a
  * production sign-off (`advertisedSuiteKeys`, read once in the root layout).
  * The menus run in the browser and cannot read sign-offs themselves.
  * Defaults to none — a menu rendered outside the provider links to no suite

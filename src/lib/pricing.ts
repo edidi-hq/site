@@ -138,7 +138,7 @@ export interface PricingData {
    *  nothing that needs a sign-off is shown (`@/lib/verified-claims`). */
   claims?: Record<string, string>;
   /** DERIVED by `fetchPricingData`, never sent: the claim keys whose sign-off
-   *  is fresh at render time. Read by the module pages' capability cards. */
+   *  holds at render time. Read by the module pages' capability cards. */
   verifiedClaims?: string[];
 }
 

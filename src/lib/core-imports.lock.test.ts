@@ -48,7 +48,7 @@ import { dirname, join } from "node:path";
  *     longest a removed person's session lasts (`ACCESS_ENDS`), and the minute
  *     it is divided by. Constants and calendar arithmetic; no package imports.
  *   - `billing/feature-claims` — which capabilities may be advertised and the
- *     sign-off freshness rule (`isProofFresh`), applied in `fetchPricingData`.
+ *     sign-off rule (`isSignedOff`), applied in `fetchPricingData`.
  *     Value imports reach only `dates`, `modules/catalog`, `modules/early-access`,
  *     `billing/feature-catalog` and `billing/features` — no package.
  *   - `billing/retention` — the statutory record-retention floor a page states

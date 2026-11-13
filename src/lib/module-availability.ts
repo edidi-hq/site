@@ -165,7 +165,7 @@ export function planAvailabilityFor(
 interface PlanNoteContext {
   plan: Plan;
   lowestIncludingPlanName: string;
-  /** Claim keys with a fresh sign-off — a note naming another capability checks it. */
+  /** Signed-off claim keys — a note naming another capability checks it. */
   verified: ReadonlySet<string>;
 }
 

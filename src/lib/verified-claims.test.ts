@@ -2,13 +2,13 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-import { CLAIM_VERIFICATION_MAX_AGE_DAYS, isClaimKey } from "@edidi-hq/core/billing/feature-claims";
+import { isClaimKey } from "@edidi-hq/core/billing/feature-claims";
 
 import { serialisePricingFallback } from "@/lib/pricing-fallback-build";
 import type { PricingData } from "@/lib/pricing";
 import { SERVICE_GROUP_KEY } from "@/lib/service-commitments";
 import { stripComments } from "@/lib/test-support/strip-comments";
-import { freshClaimKeys, withVerifiedClaimsOnly } from "@/lib/verified-claims";
+import { signedOffClaimKeys, withVerifiedClaimsOnly } from "@/lib/verified-claims";
 
 const now = new Date("2026-12-01T12:00:00Z");
 const daysAgo = (days: number) => new Date(now.getTime() - days * 86_400_000).toISOString();
@@ -35,24 +35,24 @@ function payload(overrides: Partial<PricingData> = {}): PricingData {
     claims: {
       multiCompanyGroup: daysAgo(10),
       groupAdminDashboard: daysAgo(10),
-      apiAccess: daysAgo(CLAIM_VERIFICATION_MAX_AGE_DAYS + 1),
-      bankLetterGeneration: daysAgo(1),
+      apiAccess: daysAgo(-1), // dated after now: a clock that disagrees is not evidence
+      bankLetterGeneration: daysAgo(3650), // years old: no expiry
     },
     ...overrides,
   } as unknown as PricingData;
 }
 
 describe("only signed-off claims reach the page", () => {
-  it("fresh keys are the ones signed off within the window", () => {
-    expect(freshClaimKeys(payload().claims, now)).toEqual([
+  it("signed-off keys are every past sign-off, however old", () => {
+    expect(signedOffClaimKeys(payload().claims, now)).toEqual([
       "bankLetterGeneration",
       "groupAdminDashboard",
       "multiCompanyGroup",
     ]);
-    expect(freshClaimKeys(undefined, now)).toEqual([]);
+    expect(signedOffClaimKeys(undefined, now)).toEqual([]);
   });
 
-  it("keeps a highlight only when every claim it declares is fresh; keeps fact lines", () => {
+  it("keeps a highlight only when every claim it declares is signed off; keeps fact lines", () => {
     const data = withVerifiedClaimsOnly(payload(), now);
     expect(data.plans[0]!.highlights).toEqual(["Unlimited users", "See across all your companies"]);
   });

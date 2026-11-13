@@ -178,7 +178,7 @@ function resolveCtas(config: ModuleConfig, status: ModuleStatus): {
 export interface ModulePageData {
   planAvailability: ModulePlan[];
   featurePlans: FeaturePlans;
-  /** Claim keys with a fresh production sign-off (`@/lib/verified-claims`). */
+  /** Claim keys with a production sign-off (`@/lib/verified-claims`). */
   verifiedClaims: readonly string[];
 }
 
