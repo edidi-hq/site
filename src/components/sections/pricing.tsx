@@ -16,6 +16,7 @@ import { formatCurrencyAmount } from "@/lib/money";
 import { EVERY_PLAN_LEAD } from "@/lib/plan-names";
 import { TRUST_SIGNALS } from "@/lib/compliance-posture";
 import { priceTaxNote } from "@/lib/price-tax";
+import { moduleBadgeLabel } from "@/lib/module-badge";
 import { BRAND, isModulePublic, moduleShortNameFor, SITE_PAGES } from "@/lib/brand";
 import { formatEnglishList } from "@/lib/english-list";
 import { ANNUAL_BILLED_MONTHS, PLAN_CATALOG, PLAN_ORDER } from "@edidi-hq/core/billing/catalog";
@@ -150,10 +151,12 @@ export function Pricing({ data, headingAs = "h2" }: PricingProps) {
         return `${moduleShortNameFor(m)} is for ${formatEnglishList(sectors)}`;
       });
 
-  // "All modules included" when a plan carries every module the site markets
-  // across all tiers (derived — no hardcoded count to drift).
+  // "All modules included" only when a plan carries every module the site
+  // markets across all tiers AND each is signed off — counted before the
+  // sign-off filter, so a partial sign-off never reads as "all" (derived — no
+  // hardcoded count to drift).
   const marketedModuleCount = new Set(
-    data.plans.flatMap((p) => publicPlanModules(p).map((m) => m.key)),
+    data.plans.flatMap((p) => p.modules.filter((m) => isModulePublic(m.key)).map((m) => m.key)),
   ).size;
 
   // The trial provisions a real tier — its chip lists that tier's own
@@ -317,22 +320,24 @@ export function Pricing({ data, headingAs = "h2" }: PricingProps) {
             >
               {NO_CARD_REQUIRED}
             </p>
-            <div
-              style={{
-                display: "inline-block",
-                fontSize: "var(--text-2xs)",
-                fontWeight: 500,
-                padding: "4px 10px",
-                borderRadius: "var(--radius-badge)",
-                backgroundColor: "var(--color-gold-ghost)",
-                color: "var(--color-gold-on-light)",
-                border: "1px solid var(--color-gold-divider)",
-                marginBottom: "16px",
-                alignSelf: "flex-start",
-              }}
-            >
-              {trialModuleLabel}
-            </div>
+            {trialModuleLabel && (
+              <div
+                style={{
+                  display: "inline-block",
+                  fontSize: "var(--text-2xs)",
+                  fontWeight: 500,
+                  padding: "4px 10px",
+                  borderRadius: "var(--radius-badge)",
+                  backgroundColor: "var(--color-gold-ghost)",
+                  color: "var(--color-gold-on-light)",
+                  border: "1px solid var(--color-gold-divider)",
+                  marginBottom: "16px",
+                  alignSelf: "flex-start",
+                }}
+              >
+                {trialModuleLabel}
+              </div>
+            )}
             <ul
               style={{
                 listStyle: "none",
@@ -449,16 +454,11 @@ export function Pricing({ data, headingAs = "h2" }: PricingProps) {
             // always-on engine (Authority) is not badged — it's in the "included
             // on every plan" strip below; Requests is hidden by the site.
             const badgeModules = publicPlanModules(plan);
-            const moduleNames = badgeModules
-              .map((m) => moduleShortNameFor(m))
-              .join(" + ");
+            const moduleNames = badgeModules.map((m) => moduleShortNameFor(m));
             // No hardcoded count in the label (it drifts — the same reason the
             // app's pricing lock test forbids "N modules" copy); a plan carrying
             // every marketed module reads "All modules included".
-            const moduleLabel =
-              badgeModules.length >= marketedModuleCount
-                ? "All modules included"
-                : moduleNames;
+            const moduleLabel = moduleBadgeLabel(moduleNames, marketedModuleCount);
 
             return (
               <m.div
