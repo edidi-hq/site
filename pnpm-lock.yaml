@@ -19,11 +19,11 @@ overrides:
   ip-address: '>=10.7.4'
   nanoid@<4: '>=3.3.18 <4'
   protobufjs: '>=8.6.6'
-  fast-xml-parser: '>=5.7.0'
+  fast-xml-parser: '>=5.12.0'
   fast-xml-builder: '>=1.1.7'
   fast-uri: '>=3.1.9 <4'
-  hono: '>=4.13.11'
-  '@hono/node-server': '>=2.1.3 <3'
+  hono: '>=4.13.16'
+  '@hono/node-server': '>=2.1.6 <3'
   '@sentry/bundler-plugins>glob': '>=14.0.2 <15'
   eslint>minimatch: '>=11.0.1 <12'
   '@eslint/config-array>minimatch': '>=11.0.1 <12'
@@ -53,8 +53,8 @@ importers:
   .:
     dependencies:
       '@edidi-hq/core':
-        specifier: github:edidi-hq/core#v0.319.0
-        version: git+https://git@github.com:edidi-hq/core.git#6db5b11f2956ab70789290b27c526af57f687b7b(@upstash/redis@1.38.0)(typescript@5.9.3)(zod@4.6.7)
+        specifier: github:edidi-hq/core#v0.320.0
+        version: git+https://git@github.com:edidi-hq/core.git#95bede1d0998c2cd55772789038ab89cc616165e(@upstash/redis@1.38.0)(typescript@5.9.3)(zod@4.6.7)
       '@upstash/redis':
         specifier: ^1.38.0
         version: 1.38.0
@@ -209,9 +209,9 @@ packages:
   '@cacheable/utils@2.5.0':
     resolution: {integrity: sha512-buipgOVDkkPXNR5+xBpDw7Zk2n1EvU7qBJCNUcL7rhQ//kfpOXPAvQ511Os0vpLYJ1pZnvudNytkQt2hst3wqA==}
 
-  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#6db5b11f2956ab70789290b27c526af57f687b7b':
-    resolution: {commit: 6db5b11f2956ab70789290b27c526af57f687b7b, repo: git@github.com:edidi-hq/core.git, type: git}
-    version: 0.319.0
+  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#95bede1d0998c2cd55772789038ab89cc616165e':
+    resolution: {commit: 95bede1d0998c2cd55772789038ab89cc616165e, repo: git@github.com:edidi-hq/core.git, type: git}
+    version: 0.320.0
     engines: {node: '>=22.15.0'}
     peerDependencies:
       '@aws-sdk/client-s3': ^3.1065.0
@@ -2007,7 +2007,7 @@ snapshots:
       hashery: 1.5.1
       keyv: 5.6.0
 
-  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#6db5b11f2956ab70789290b27c526af57f687b7b(@upstash/redis@1.38.0)(typescript@5.9.3)(zod@4.6.7)':
+  '@edidi-hq/core@git+https://git@github.com:edidi-hq/core.git#95bede1d0998c2cd55772789038ab89cc616165e(@upstash/redis@1.38.0)(typescript@5.9.3)(zod@4.6.7)':
     optionalDependencies:
       '@upstash/redis': 1.38.0
       typescript: 5.9.3
