@@ -438,7 +438,7 @@ export function AuditMockup() {
 export function LifecycleMockup() {
   return (
     <div style={{ padding: "22px", backgroundColor: "var(--color-bg-light)" }}>
-      <Label>USER · AUDIT ACCESS</Label>
+      <Label>USER · ACCESS</Label>
       <div
         style={{
           backgroundColor: "var(--color-white)",
@@ -453,10 +453,10 @@ export function LifecycleMockup() {
       >
         <div>
           <div style={{ fontSize: "var(--text-md)", fontWeight: 600, color: "var(--color-text-primary)" }}>
-            Temidayo A. · External Auditor
+            Temidayo A. · Finance Officer
           </div>
           <div style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)", marginTop: "2px" }}>
-            temidayo@auditfirm.example
+            temidayo@yourcompany.example
           </div>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
@@ -469,7 +469,7 @@ export function LifecycleMockup() {
             }}
           >
             <div style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-3xs)", color: "var(--color-text-muted)", letterSpacing: "0.06em" }}>
-              ACCESS GRANTED
+              ADDED
             </div>
             <div style={{ fontSize: "var(--text-sm)", fontWeight: 500, color: "var(--color-text-primary)", marginTop: "4px" }}>
               2026-04-01
@@ -487,7 +487,7 @@ export function LifecycleMockup() {
             }}
           >
             <div style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-3xs)", color: "var(--color-text-muted)", letterSpacing: "0.06em" }}>
-              EXPIRES
+              DEACTIVATED
             </div>
             <div
               style={{
@@ -500,7 +500,7 @@ export function LifecycleMockup() {
               }}
             >
               <Clock size={12} color="var(--color-gold)" strokeWidth={2} aria-hidden="true" />
-              2026-05-15 · auto-revoke
+              2026-05-15 · sessions ended
             </div>
           </div>
         </div>
@@ -521,7 +521,7 @@ export function LifecycleMockup() {
               marginBottom: "6px",
             }}
           >
-            PROVISIONED VIA
+            ADDED BY
           </div>
           <div
             style={{
@@ -532,7 +532,7 @@ export function LifecycleMockup() {
               gap: "6px",
             }}
           >
-            SCIM 2.0 · Okta
+            Your administrator
           </div>
         </div>
       </div>

@@ -1,8 +1,11 @@
 import { describe, it, expect } from "vitest";
 
-import sitemap from "@/app/sitemap";
+import { sitemapFor } from "@/app/sitemap";
+import { CLAIM_KEYS } from "@edidi-hq/core/billing/feature-claims";
+import fallback from "@/data/pricing-fallback.json";
+import type { PricingData } from "@/lib/pricing";
 import { SITE_URL } from "@/lib/seo";
-import { moduleHref, suiteHref, SUITES } from "@/lib/brand";
+import { MODULE_ORDER, moduleHref, suiteHref, SUITES } from "@/lib/brand";
 import { isLaunchHidden } from "@/lib/launch";
 import { SITE_ROUTES } from "@/lib/routes";
 import { chromeLinks } from "@/lib/site-nav";
@@ -25,8 +28,11 @@ const INTENTIONALLY_ABSENT: Record<string, string> = {
   [SITE_ROUTES.features]: "redirects to /product",
 };
 
-function sitemapPaths(): string[] {
-  return sitemap().map((entry) => {
+/** Every claim signed off: what the sitemap holds once production is checked. */
+const SIGNED_OFF = { ...(fallback as unknown as PricingData), verifiedClaims: [...CLAIM_KEYS] };
+
+function sitemapPaths(data: PricingData = SIGNED_OFF): string[] {
+  return sitemapFor(data).map((entry) => {
     const path = entry.url.slice(SITE_URL.length);
     return path === "" ? SITE_ROUTES.home : path;
   });
@@ -83,5 +89,23 @@ describe("sitemap", () => {
     for (const path of Object.keys(INTENTIONALLY_ABSENT)) {
       expect(inSitemap.has(path), `${path} is documented as absent (${INTENTIONALLY_ABSENT[path]}) but is in the sitemap`).toBe(false);
     }
+  });
+});
+
+describe("sitemap — no sign-off, no page", () => {
+  const gatedPaths = [
+    ...MODULE_ORDER.map((key) => moduleHref(key)),
+    ...SUITES.map((suite) => suiteHref(suite.key)),
+  ];
+
+  it("lists no module or suite page before anything is signed off", () => {
+    const paths = sitemapPaths(fallback as unknown as PricingData);
+    expect(paths.filter((path) => gatedPaths.includes(path))).toEqual([]);
+    expect(paths).toContain(SITE_ROUTES.product);
+  });
+
+  it("lists a module and its suite once that module is signed off", () => {
+    const paths = sitemapPaths({ ...(fallback as unknown as PricingData), verifiedClaims: ["pay"] });
+    expect(paths.filter((path) => gatedPaths.includes(path))).toEqual([suiteHref("spend"), moduleHref("pay")]);
   });
 });

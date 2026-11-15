@@ -60,7 +60,7 @@ const config: ModuleConfig = {
       title: "Post high-value approvals to Slack",
       planFeature: "apiAccess",
       body:
-        "Forward the signed sanction event through a small relay of your own, and every approval above your threshold lands in #finance-audit in real time — without granting broad access to the platform UI.",
+        "Forward the signed sanction event through a small relay of your own, and every approval above your threshold lands in #finance-audit — without granting broad access to the platform UI.",
     },
     {
       title: "Build your own internal integrations",

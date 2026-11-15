@@ -3,7 +3,7 @@ import { ProcureModulePage } from "@/components/product/pages/procure-module-pag
 import { fetchPricingData } from "@/lib/pricing";
 import { modulePageData } from "@/lib/module-availability";
 import { pageMetadata } from "@/lib/seo";
-import { notFoundUnlessPublic } from "@/lib/module-route";
+import { notFoundUnlessPublic, notFoundUnlessSignedOff } from "@/lib/module-route";
 import { moduleName, moduleHref } from "@/lib/brand";
 
 export const metadata: Metadata = pageMetadata({
@@ -16,5 +16,6 @@ export const metadata: Metadata = pageMetadata({
 export default async function ProductProcurePage() {
   notFoundUnlessPublic("procure");
   const pricingData = await fetchPricingData();
+  notFoundUnlessSignedOff("procure", pricingData);
   return <ProcureModulePage {...modulePageData("procure", pricingData)} />;
 }

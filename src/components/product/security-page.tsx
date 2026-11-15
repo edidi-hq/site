@@ -26,8 +26,10 @@ import {
   Check,
   Mail,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-import { SECURITY_FAQS } from "@/lib/security-faqs";
+import type { SecurityFaq } from "@/lib/security-faqs";
+import type { ClaimKey } from "@edidi-hq/core/billing/feature-claims";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { CtaBanner } from "@/components/sections/cta-banner";
@@ -79,7 +81,39 @@ const PILLARS = [
   },
 ];
 
-const STACK = [
+/**
+ * A bullet naming a paid capability: shown only once its claims have a
+ * production sign-off (`@/lib/verified-claims`). A plain string is something
+ * every customer gets (isolation, authority, sessions, the trail, encryption).
+ */
+interface PaidBullet {
+  text: string;
+  claims: readonly ClaimKey[];
+}
+type Bullet = string | PaidBullet;
+
+function paid(text: string, ...claims: ClaimKey[]): PaidBullet {
+  return { text, claims };
+}
+
+/** A section's bullets that may be shown, as text. */
+export function signedOffBullets(bullets: readonly Bullet[], verifiedClaims: readonly string[]): string[] {
+  return bullets
+    .filter((bullet) => typeof bullet === "string" || bullet.claims.every((key) => verifiedClaims.includes(key)))
+    .map((bullet) => (typeof bullet === "string" ? bullet : bullet.text));
+}
+
+const STACK: ReadonlyArray<{
+  number: string;
+  key: string;
+  title: string;
+  subtitle: string;
+  body: string;
+  icon: LucideIcon;
+  bullets: Bullet[];
+  Mockup: () => React.ReactNode;
+  caption: string;
+}> = [
   {
     number: "01",
     key: "isolation",
@@ -120,13 +154,14 @@ const STACK = [
     title: "Session integrity",
     subtitle: `When a role changes or a user leaves, their active sessions are invalid ${ACCESS_ENDS}.`,
     body:
-      "Every session is checked on every click. A role change, deactivation, password change, access expiry, or a company-wide sign-out means signing in again on the next click. Two-factor sign-in accepts a passkey, an authenticator app, or a one-time code by email or SMS, with secured recovery codes behind them. Per-tenant IP allowlisting (both IPv4 and IPv6) is available as a hard sign-in gate.",
+      "Every session is checked on every click. A role change, deactivation, password change, access expiry, or a company-wide sign-out means signing in again on the next click. Two-factor sign-in accepts a passkey, an authenticator app, or a one-time code by email or SMS, with secured recovery codes behind them.",
     icon: ShieldCheck,
     bullets: [
       `Active sessions end ${ACCESS_ENDS} of a role change, deactivation, or password change`,
-      "Two-factor sign-in by passkey, authenticator app, email code or SMS — required for everyone or for the roles you choose",
-      "Per-tenant IP allowlist (IPv4 and IPv6) available as a hard sign-in gate",
-      "Single sign-on via OpenID Connect (OIDC) or SAML 2.0, which a company can require; one sign-in per person across every company they work in",
+      paid("Two-factor sign-in by passkey, authenticator app, email code or SMS — required for everyone or for the roles you choose", "mfaPolicy"),
+      paid("Per-tenant IP allowlist (IPv4 and IPv6) available as a hard sign-in gate", "ipAllowlist"),
+      paid("Single sign-on via OpenID Connect (OIDC) or SAML 2.0, which a company can require", "sso"),
+      paid("One sign-in per person across every company they work in", "multiCompanyGroup"),
     ],
     Mockup: SessionMockup,
     caption: "session revocation · identity controls",
@@ -135,15 +170,15 @@ const STACK = [
     number: "04",
     key: "audit",
     title: "Audit trail",
-    subtitle: "Every action recorded and sealed. Every export, regulator-ready.",
+    subtitle: "Every action recorded and sealed — and checkable by your auditor.",
     body:
-      `The audit log records who did what, when and from where, for every meaningful event. Role changes and board-access lifecycle events have their own dedicated trails. Each entry is chained to the one before it, and edits and deletions are refused by the database. Lawful retention purges leave a verifiable marker in the chain. Every night the chain is sealed with a signed fingerprint your auditor can check without trusting ${BRAND.name}.`,
+      `The audit log records who did what, when and from where, for every meaningful event. Role changes have their own dedicated trail. Each entry is chained to the one before it, and edits and deletions are refused by the database. Lawful retention purges leave a verifiable marker in the chain. Every night the chain is sealed with a signed fingerprint your auditor can check without trusting ${BRAND.name}.`,
     icon: FileSearch,
     bullets: [
       "Every approval, query, and role change written to an append-only log",
       "Dedicated trail for role changes, capturing who changed what and why",
-      "Board-access lifecycle fully tracked — provisioning, approval, expiry, renewal, revocation",
-      "One-click regulator-ready export for any period of up to a year",
+      paid("Board-access lifecycle fully tracked — provisioning, approval, expiry, renewal, revocation", "companyBoard"),
+      paid("One-click regulator-ready export for any period of up to a year", "fullAuditExport"),
     ],
     Mockup: AuditMockup,
     caption: "tamper-evident audit trail · role-change log",
@@ -154,17 +189,17 @@ const STACK = [
     title: "Access lifecycle",
     subtitle: `People come and go — access keeps up. Joiners get what they need; leavers lose access ${ACCESS_ENDS}.`,
     body:
-      "User provisioning flows in automatically from your identity provider (Okta or Microsoft Entra). Auditor and board-level guests get a clear start date and expiry — access is withdrawn on the dot without manual clean-up. Document retention follows your plan; the audit trail itself is never purged while the account is active.",
+      "Who can sign in follows your own user list, and every change to it is on the audit trail. Document retention follows your plan; the audit trail itself is never purged while the account is active.",
     icon: KeyRound,
     bullets: [
-      "Automated user provisioning (SCIM) with Okta and Microsoft Entra",
-      "Directory groups mapped to roles — anything beyond staff access waits for a person in your organisation to approve it",
-      "Time-bound access for auditors and provisional board members, with automatic revocation",
+      paid("Automated user provisioning (SCIM) with Okta and Microsoft Entra", "sso"),
+      paid("Directory groups mapped to roles — anything beyond staff access waits for a person in your organisation to approve it", "sso"),
+      paid("Time-bound access for auditors and provisional board members, with automatic revocation", "oversightRoles"),
       "Per-plan document retention, with the audit trail itself never purged",
       "Attachments served through short-lived, per-upload URLs",
     ],
     Mockup: LifecycleMockup,
-    caption: "access lifecycle · SCIM provisioning",
+    caption: "access lifecycle · joiners and leavers",
   },
   {
     number: "06",
@@ -172,7 +207,7 @@ const STACK = [
     title: "Encryption & infrastructure",
     subtitle: "Encrypted in transit and at rest — and again on top of that, for the most sensitive pieces like two-factor codes and single sign-on tokens.",
     body:
-      "All traffic is encrypted with modern TLS. The application database is encrypted at rest, with automated daily snapshots. Sensitive application secrets — two-factor codes, single sign-on tokens — are encrypted again at the application layer before being written, so even a database leak would not expose them. Attachments live in encrypted object storage and are delivered through short-lived, per-upload URLs.",
+      "All traffic is encrypted with modern TLS. The application database is encrypted at rest, with automated daily snapshots. Sensitive application secrets, such as two-factor codes, are encrypted again at the application layer before being written, so even a database leak would not expose them. Attachments live in encrypted object storage and are delivered through short-lived, per-upload URLs.",
     icon: Lock,
     bullets: [
       "Modern TLS in transit, with strict browser-side policies",
@@ -185,7 +220,15 @@ const STACK = [
   },
 ];
 
-function StackRow({ stage, index }: { stage: (typeof STACK)[number]; index: number }) {
+function StackRow({
+  stage,
+  index,
+  verifiedClaims,
+}: {
+  stage: (typeof STACK)[number];
+  index: number;
+  verifiedClaims: readonly string[];
+}) {
   const reverse = index % 2 === 1;
   const Mockup = stage.Mockup;
   const Icon = stage.icon;
@@ -261,7 +304,7 @@ function StackRow({ stage, index }: { stage: (typeof STACK)[number]; index: numb
           {stage.body}
         </p>
         <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "8px" }}>
-          {stage.bullets.map((b) => (
+          {signedOffBullets(stage.bullets, verifiedClaims).map((b) => (
             <li
               key={b}
               style={{
@@ -288,7 +331,15 @@ function StackRow({ stage, index }: { stage: (typeof STACK)[number]; index: numb
   );
 }
 
-export function SecurityProductPage() {
+export function SecurityProductPage({
+  verifiedClaims,
+  faqs,
+}: {
+  /** Claim keys with a production sign-off (`@/lib/verified-claims`). */
+  verifiedClaims: readonly string[];
+  /** The FAQ entries that may be shown (`signedOffFaqs`). */
+  faqs: readonly SecurityFaq[];
+}) {
 
   return (
     <>
@@ -446,7 +497,7 @@ export function SecurityProductPage() {
       <section id="stack" style={{ backgroundColor: "var(--color-white)", padding: "120px 40px", scrollMarginTop: "80px", position: "relative", overflow: "hidden", isolation: "isolate" }}>
         <div style={{ maxWidth: "var(--layout-max-width)", margin: "0 auto", display: "flex", flexDirection: "column", gap: "120px" }}>
           {STACK.map((s, i) => (
-            <StackRow key={s.key} stage={s} index={i} />
+            <StackRow key={s.key} stage={s} index={i} verifiedClaims={verifiedClaims} />
           ))}
         </div>
       </section>
@@ -626,7 +677,7 @@ export function SecurityProductPage() {
               overflow: "hidden",
             }}
           >
-            {SECURITY_FAQS.map((f, i) => (
+            {faqs.map((f, i) => (
               <m.details
                 key={f.q}
                 {...fadeUpOnScroll(i + 2)}
@@ -668,7 +719,7 @@ export function SecurityProductPage() {
           </div>
 
           <m.div
-            {...fadeUpOnScroll(SECURITY_FAQS.length + 2)}
+            {...fadeUpOnScroll(faqs.length + 2)}
             style={{
               marginTop: "32px",
               padding: "22px 26px",

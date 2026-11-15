@@ -3,7 +3,7 @@ import { AuthorityModulePage } from "@/components/product/pages/authority-module
 import { fetchPricingData } from "@/lib/pricing";
 import { modulePageData } from "@/lib/module-availability";
 import { pageMetadata } from "@/lib/seo";
-import { notFoundUnlessPublic } from "@/lib/module-route";
+import { notFoundUnlessPublic, notFoundUnlessSignedOff } from "@/lib/module-route";
 import { moduleName, moduleHref } from "@/lib/brand";
 
 const DESCRIPTION =
@@ -20,5 +20,6 @@ export const metadata: Metadata = pageMetadata({
 export default async function ProductAuthorityPage() {
   notFoundUnlessPublic("authority");
   const pricingData = await fetchPricingData();
+  notFoundUnlessSignedOff("authority", pricingData);
   return <AuthorityModulePage {...modulePageData("authority", pricingData)} />;
 }

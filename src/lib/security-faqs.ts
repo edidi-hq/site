@@ -2,15 +2,23 @@ import { CONTACT_EMAIL, SECURITY_TRIAGE_TIME } from "@/lib/contacts";
 import { DATA_RESIDENCY_PUBLIC, RESIDENCY_REQUEST_LINE } from "@/lib/subprocessors";
 import { ACCESS_ENDS } from "@/lib/compliance-posture";
 import { BRAND } from "@/lib/brand";
+import type { ClaimKey } from "@edidi-hq/core/billing/feature-claims";
 /**
  * Security FAQ content — the single source for both the visible accordion on
  * /product/security and the FAQPage JSON-LD on that route. Keeping them in one
  * place stops the rendered copy and the structured data from drifting apart.
  */
 
-interface SecurityFaq {
+export interface SecurityFaq {
   q: string;
   a: string;
+  /** A paid capability the answer advertises: shown only once signed off (`@/lib/verified-claims`). */
+  claims?: readonly ClaimKey[];
+}
+
+/** The FAQ entries that may be shown — the accordion and its JSON-LD read the same list. */
+export function signedOffFaqs(verifiedClaims: readonly string[]): SecurityFaq[] {
+  return SECURITY_FAQS.filter((faq) => (faq.claims ?? []).every((key) => verifiedClaims.includes(key)));
 }
 
 export const SECURITY_FAQS: SecurityFaq[] = [
@@ -20,14 +28,16 @@ export const SECURITY_FAQS: SecurityFaq[] = [
   },
   {
     q: "What happens when someone leaves our organisation?",
-    a: `Deactivation ends their active sessions ${ACCESS_ENDS}. If they are deprovisioned through your identity provider (SCIM), this happens automatically when it marks the user inactive. Their historical actions remain in the audit trail — the record is preserved, not deleted.`,
+    a: `Deactivation ends their active sessions ${ACCESS_ENDS}. Their historical actions remain in the audit trail — the record is preserved, not deleted.`,
   },
   {
     q: "Can we export everything — for an auditor, regulator, or migration?",
+    claims: ["fullAuditExport"],
     a: "Yes. The audit-trail export bundles every approval, signature, query, and role change for any period of up to a year into a regulator-ready file. Document PDFs and attachments are exported alongside. You own your data; we don't hold it hostage.",
   },
   {
     q: "Do you support SSO and SCIM?",
+    claims: ["sso"],
     a: "Yes — single sign-on with any OpenID Connect (OIDC) or SAML 2.0 provider, tested with Okta, Microsoft Entra and Google Workspace, and automatic user setup (SCIM 2.0) from Okta and Microsoft Entra. Roles beyond staff access are approved by a person in your organisation first.",
   },
   {

@@ -16,5 +16,11 @@ export const metadata: Metadata = pageMetadata({
 
 export default async function IntegrationsPage() {
   const pricingData = await fetchPricingData();
-  return <IntegrationsCataloguePage featurePlans={featurePlans(pricingData)} allPlanNames={planNames(pricingData)} />;
+  return (
+    <IntegrationsCataloguePage
+      featurePlans={featurePlans(pricingData)}
+      allPlanNames={planNames(pricingData)}
+      verifiedClaims={pricingData.verifiedClaims ?? []}
+    />
+  );
 }

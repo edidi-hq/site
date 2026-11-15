@@ -8,7 +8,9 @@ import { BrandLogo } from "@/components/ui/logo";
 import { ButtonLink } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/section-intro";
 import { MOTION_DURATION, MOTION_EASE, fadeUp } from "@/lib/animations";
-import { NAV_LINKS, PLATFORM_NAV, SUITE_NAV, TOP_NAV } from "@/lib/site-nav";
+import { NAV_LINKS, PLATFORM_NAV, SUITE_NAV, TOP_NAV, withAdvertisedSuites } from "@/lib/site-nav";
+import { useAdvertisedSuites } from "@/components/providers/advertised-suites-provider";
+
 import { Z_INDEX } from "@/lib/layers";
 
 interface MobileMenuProps {
@@ -17,12 +19,13 @@ interface MobileMenuProps {
   pathname: string;
 }
 
-// The same lists the desktop bar renders (`site-nav.ts`): suites, then "All
-// modules" so the full catalogue stays one tap away.
+// The same lists the desktop bar renders (`site-nav.ts`): advertised suites,
+// then "All modules" so the full catalogue stays one tap away.
 const PRODUCT_SUITES = [...SUITE_NAV, NAV_LINKS.allModules];
 
 
 export function MobileMenu({ open, onClose, pathname }: MobileMenuProps) {
+  const productSuites = withAdvertisedSuites(PRODUCT_SUITES, useAdvertisedSuites());
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -134,7 +137,7 @@ export function MobileMenu({ open, onClose, pathname }: MobileMenuProps) {
 
               {/* Module links */}
               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                {PRODUCT_SUITES.map((mod) => (
+                {productSuites.map((mod) => (
                   <Link
                     key={mod.href}
                     href={mod.href}

@@ -138,7 +138,19 @@ function DecisionCard() {
   );
 }
 
-export function Hero() {
+/**
+ * The headline, word by word (each fades in). "Across every company you run" is
+ * the multi-company claim, so it shows only once `multiCompanyGroup` has a
+ * production sign-off (`@/lib/verified-claims`); until then the line every
+ * customer gets. The em dash stays bound to "what" (see the render below).
+ */
+const HEADLINE_WORDS = {
+  group: ["Prove", "who", "authorised", "what —", "across", "every", "company", "you", "run."],
+  singleCompany: ["Prove", "who", "authorised", "what —", "on", "every", "decision", "you", "make."],
+} as const;
+
+/** `multiCompanySignedOff`: whether the multi-company claim is signed off on production. */
+export function Hero({ multiCompanySignedOff }: { multiCompanySignedOff: boolean }) {
   return (
     <section
       style={{
@@ -184,7 +196,7 @@ export function Hero() {
                 "what —" alone on a line at desktop width. The em dash is bound to
                 "what" as ONE span, never its own word: at 390px a standalone dash
                 wrapped onto a line by itself and read as a stray rule. */}
-            {["Prove", "who", "authorised", "what —", "across", "every", "company", "you", "run."].map((word, index, words) => (
+            {(multiCompanySignedOff ? HEADLINE_WORDS.group : HEADLINE_WORDS.singleCompany).map((word, index, words) => (
               <m.span
                 key={word}
                 variants={fadeUp}

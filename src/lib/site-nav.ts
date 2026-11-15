@@ -1,4 +1,4 @@
-import { LEGAL_PAGES, SITE_PAGES, SUITES, suiteHref } from "@/lib/brand";
+import { LEGAL_PAGES, SITE_PAGES, SUITES, suiteHref, type ModuleSuite } from "@/lib/brand";
 import { isLaunchVisible } from "@/lib/launch";
 import { LOGIN_URL } from "@/lib/platform";
 import { SITE_ROUTES } from "@/lib/routes";
@@ -76,6 +76,17 @@ export const FOOTER_COLUMNS: { label: string; links: NavLink[] }[] = [
 ]
   .map((column) => ({ ...column, links: shown(column.links) }))
   .filter((column) => column.links.length > 0);
+
+/**
+ * `links` without the suite pages the menus may not link to: a suite link stays
+ * only while its suite is advertised (`advertisedSuiteKeys`, via the root
+ * layout's provider). Other links pass through.
+ */
+export function withAdvertisedSuites(links: readonly NavLink[], advertised: readonly ModuleSuite[]): NavLink[] {
+  const advertisedHrefs = new Set(advertised.map((suite) => suiteHref(suite)));
+  const suiteHrefs = new Set(SUITE_NAV.map((link) => link.href));
+  return links.filter((link) => !suiteHrefs.has(link.href) || advertisedHrefs.has(link.href));
+}
 
 /** Every internal destination the chrome can link to — what the sitemap test checks. */
 export function chromeLinks(): NavLink[] {

@@ -25,7 +25,7 @@ const STAGE_BODY: Record<LifecycleStageKey, string> = {
   submit:
     `Any team member raises a request directly in ${BRAND.name} — payment voucher, purchase order, or any operational approval. They complete a structured form, attach supporting documents, and submit. The request enters the defined approval chain immediately — no emails, no chasing, no ambiguity about where it goes next.`,
   review:
-    "The right person is notified instantly — via the platform, email, WhatsApp, or SMS. They review the complete request and approve, query, or return it with a single action from any device, anywhere in the world. Decision makers are never a bottleneck because they are never out of reach.",
+    "The right person is notified as it reaches their step — via the platform, email, WhatsApp, or SMS. They review the complete request and approve, query, or return it with a single action from any device, anywhere in the world. Decision makers are never a bottleneck because they are never out of reach.",
   sanction:
     "Final authority signs it off. The Managing Director sees every approval collected along the way and sanctions with a saved signature, stamped onto every document the request produces. Authority becomes binding — and the record shows exactly who gave it.",
   record:
@@ -33,7 +33,7 @@ const STAGE_BODY: Record<LifecycleStageKey, string> = {
 };
 
 const FEATURES = [
-  { icon: Zap, label: "Real-time notifications" },
+  { icon: Zap, label: "Notified at every step" },
   { icon: Smartphone, label: "Approve from any device" },
   { icon: Lock, label: "Tamper-evident records" },
   { icon: Globe, label: "Works across any location" },

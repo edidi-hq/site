@@ -3,8 +3,12 @@ import { planAvailabilityFor } from "@/lib/module-availability";
 import type { PricingData } from "@/lib/pricing";
 import fallback from "@/data/pricing-fallback.json";
 import { TRIAL_LENGTH, TRIAL_PLAN_NAME } from "@/lib/trial-terms";
+import { CLAIM_KEYS } from "@edidi-hq/core/billing/feature-claims";
 
-const data = fallback as unknown as PricingData;
+/** The offline payload with every claim signed off — what the notes say once production is checked. */
+const data = { ...(fallback as unknown as PricingData), verifiedClaims: [...CLAIM_KEYS] };
+/** The same payload before any sign-off: inclusion stays, capability words go. */
+const unsigned = fallback as unknown as PricingData;
 const TRIAL_ROW = `${TRIAL_LENGTH} ${TRIAL_PLAN_NAME} trial`;
 
 /** The row for a plan display name, e.g. "Starter". */
@@ -154,6 +158,32 @@ describe("planAvailabilityFor — degraded payloads must not invent entitlement"
     expect(row("audit", nameOf(data.planOrder[0]!))?.note).toMatch(
       new RegExp(`exports from ${nameOf(lowest("audit"))}$`),
     );
+  });
+});
+
+describe("planAvailabilityFor — only signed-off capabilities are named", () => {
+  const unsignedRow = (moduleKey: string, planName: string) =>
+    planAvailabilityFor(moduleKey, unsigned).find((r) => r.plan === planName);
+
+  it("keeps inclusion and where a module starts — facts about the plans, not claims", () => {
+    expect(unsignedRow("pay", "Starter")?.included).toBe(true);
+    expect(unsignedRow("guard", "Starter")?.note).toBe(row("guard", "Starter")?.note);
+  });
+
+  it("names no feature and no module depth without a sign-off", () => {
+    for (const moduleKey of ["pay", "procure", "guard", "grants", "audit"]) {
+      for (const planName of ["Starter", "Business", "Enterprise"]) {
+        expect(unsignedRow(moduleKey, planName)?.note ?? "", `${moduleKey} on ${planName}`).not.toMatch(
+          /^(Includes|Also unlocks):|review queue|Donors|SIEM|still recorded/,
+        );
+      }
+    }
+  });
+
+  it("names a feature once it is signed off, and only that one", () => {
+    const signed = { ...unsigned, verifiedClaims: ["pay", "pdfExport"] };
+    const note = planAvailabilityFor("pay", signed).find((r) => r.plan === "Starter")?.note;
+    expect(note).toBe(`Includes: ${unsigned.featureLabels.pdfExport}`);
   });
 });
 

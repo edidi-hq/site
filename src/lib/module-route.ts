@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 
 import { isModulePublic, type ModuleKey } from "@/lib/brand";
+import type { PricingData } from "@/lib/pricing";
+import { advertisedModuleKeys } from "@/lib/verified-claims";
 
 /**
  * A module route renders only for a module the site shows. The visibility flag
@@ -10,4 +12,12 @@ import { isModulePublic, type ModuleKey } from "@/lib/brand";
  */
 export function notFoundUnlessPublic(moduleKey: ModuleKey): void {
   if (!isModulePublic(moduleKey)) notFound();
+}
+
+/**
+ * No sign-off, no page: after the pricing fetch, a module whose own claim has no
+ * fresh production sign-off answers not-found (`@/lib/verified-claims`).
+ */
+export function notFoundUnlessSignedOff(moduleKey: ModuleKey, data: PricingData): void {
+  if (!advertisedModuleKeys(data).includes(moduleKey)) notFound();
 }

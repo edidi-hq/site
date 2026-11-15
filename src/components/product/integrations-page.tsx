@@ -10,6 +10,7 @@
 import { PLAN_ORDER } from "@edidi-hq/core/billing/catalog";
 import { PLAN_CAPACITY } from "@edidi-hq/core/billing/capacity";
 import type { PlanFeatureKey } from "@edidi-hq/core/billing/features";
+import type { ClaimKey } from "@edidi-hq/core/billing/feature-claims";
 import { planScopeNote, type FeaturePlans } from "@/lib/plan-names";
 import Link from "next/link";
 import { m } from "framer-motion";
@@ -29,6 +30,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { contactHref } from "@/app/contact/tabs";
 import { ACCESS_ENDS } from "@/lib/compliance-posture";
+import { formatEnglishList } from "@/lib/english-list";
 import { ButtonLink } from "@/components/ui/button";
 import { SectionIntro } from "@/components/ui/section-intro";
 import { Z_INDEX } from "@/lib/layers";
@@ -55,18 +57,45 @@ const WEBHOOK_EVENT_GROUPS: ReadonlyArray<{ name: string; detail: string }> = [
 interface Integration {
   name: string;
   summary: string;
+  /** A claim this item makes beyond its section's; it shows only once signed off too. */
+  claims?: readonly ClaimKey[];
 }
 
 interface Category {
   id: string;
   icon: LucideIcon;
   eyebrow: string;
+  /** How the hero's summary line names this section: "identity", "banking". */
+  summaryName: string;
   title: string;
   lede: string;
   /** Plan feature that gates this category; its plans are named after the lede. */
   planFeature?: PlanFeatureKey;
+  /**
+   * The capabilities this section advertises. It shows only while every one
+   * has a production sign-off (`@/lib/verified-claims`); never empty, and it
+   * includes `planFeature` (both lock-tested).
+   */
+  claims: readonly ClaimKey[];
   integrations: Integration[];
 }
+
+function capitalise(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+/** The sections, and items within them, whose claims are all signed off. */
+export function signedOffCategories(verifiedClaims: readonly string[]): Category[] {
+  const signedOff = (claims: readonly string[] = []) => claims.every((key) => verifiedClaims.includes(key));
+  return CATEGORIES.filter((category) => signedOff(category.claims)).map((category) => ({
+    ...category,
+    integrations: category.integrations.filter((item) => signedOff(item.claims)),
+  }));
+}
+
+/** Every section's declared claims, for the lock test. */
+export const INTEGRATION_SECTION_CLAIMS = (): ReadonlyArray<{ id: string; claims: readonly string[]; planFeature?: string }> =>
+  CATEGORIES.map(({ id, claims, planFeature }) => ({ id, claims, planFeature }));
 
 /** WhatsApp and SMS ride every plan's monthly message allowance (core's capacity), so say so only while every plan has one. */
 const MESSAGING_ON_EVERY_PLAN = PLAN_ORDER.every((planKey) => PLAN_CAPACITY[planKey].monthlyMessageCap > 0);
@@ -76,24 +105,32 @@ const CATEGORIES: Category[] = [
     id: "identity",
     icon: KeyRound,
     eyebrow: "IDENTITY & SINGLE SIGN-ON",
+    summaryName: "identity",
     title: "Sign in with the identity provider you already run.",
     lede:
-      `${BRAND.name} speaks the standard identity protocols — OpenID Connect and SAML 2.0 — with no per-provider hacks. Sessions, revocation, and MFA all work the same whether you're on Okta, Entra, or Google Workspace, and each person keeps one sign-in across every company they work in.`,
+      `${BRAND.name} speaks the standard identity protocols — OpenID Connect and SAML 2.0 — with no per-provider hacks. Sessions, revocation, and MFA all work the same whether you're on Okta, Entra, or Google Workspace.`,
     planFeature: "sso",
+    claims: ["sso"],
     integrations: [
       { name: "Single sign-on", summary: "Any SAML 2.0 or OpenID Connect identity provider — tested with Okta, Microsoft Entra ID and Google Workspace." },
       { name: "Required single sign-on", summary: "Make your identity provider the way your people sign in, with a password kept for administrators." },
-      { name: "One provider for a group", summary: "Companies in a group can accept the sign-in of the group's identity provider." },
+      {
+        name: "One provider for a group",
+        summary: "Companies in a group can accept the sign-in of the group's identity provider.",
+        claims: ["multiCompanyGroup"],
+      },
     ],
   },
   {
     id: "provisioning",
     icon: UserCog,
     eyebrow: "DIRECTORY PROVISIONING",
+    summaryName: "provisioning",
     title: "Users flow from your IdP — and leave when they should.",
     lede:
       `SCIM 2.0 keeps ${BRAND.name} in sync with your directory. Add a user in Okta, they land here. Mark them inactive, their session is revoked ${ACCESS_ENDS}. Directory groups can ask for roles — but beyond basic staff access, a person in your organisation approves each one first.`,
     planFeature: "sso",
+    claims: ["sso"],
     integrations: [
       { name: "Automatic user provisioning", summary: "SCIM 2.0 creates, updates and deactivates people from Okta or Microsoft Entra ID." },
       { name: "Groups mapped to roles", summary: "Directory groups request roles; anything beyond staff waits for a person to approve it." },
@@ -103,9 +140,11 @@ const CATEGORIES: Category[] = [
     id: "notifications",
     icon: MessagesSquare,
     eyebrow: "NOTIFICATIONS",
+    summaryName: "notifications",
     title: "Approvers hear about requests wherever they already look.",
     lede:
       "Every stage of the approval lifecycle can dispatch to the channels your approvers actually check. Multi-channel by default, all tracked to the audit trail.",
+    claims: ["approvalChain"],
     integrations: [
       { name: "Email (transactional)", summary: "Approval-quality emails with deep links, delivered by an enterprise-grade email provider." },
       { name: "WhatsApp", summary: `Approval alerts with a secure review link${MESSAGING_ON_EVERY_PLAN ? ", on every plan" : ""}.` },
@@ -117,10 +156,12 @@ const CATEGORIES: Category[] = [
     id: "accounting",
     icon: Receipt,
     eyebrow: "ACCOUNTING & ERP",
+    summaryName: "accounting",
     title: "Approved spending lands in your ledger, coded your way.",
     lede:
       `Vouchers and order lines carry your own accounting codes, and approved vouchers and payments become balanced journal entries in a file your accounting system imports — each entry exported once, so nothing is posted twice. Use a ready-made layout where your system has one; any other ledger takes the standard CSV, and plans with API access can also read the entries over our API.`,
     planFeature: "budgetCodes",
+    claims: ["budgetCodes", "csvExport"],
     integrations: [
       { name: "Your chart of accounts", summary: "Accounts, cost centres, projects and funds on every voucher and order line." },
       { name: "QuickBooks Online", summary: "Journal entries in QuickBooks Online's import layout." },
@@ -133,9 +174,11 @@ const CATEGORIES: Category[] = [
     id: "banking",
     icon: Landmark,
     eyebrow: "BANKING",
+    summaryName: "banking",
     title: "Bank letters and payment files, in your bank's own scheme.",
     lede:
       "Every sanctioned voucher produces a formally formatted bank letter with the MD's signature, and approved payments go out as a payment file in your bank's own scheme — upload it, and the money moves on your rails.",
+    claims: ["bankLetterGeneration", "bankExport"],
     integrations: [
       { name: "Bank-ready PDF letter", summary: "Per-voucher letter with MD signature + letterhead." },
       { name: "NIBSS Direct Credit", summary: "Naira batch files accepted by most Nigerian banks, plus GTBank and Access Bank portal imports." },
@@ -146,10 +189,12 @@ const CATEGORIES: Category[] = [
     id: "developer",
     icon: Webhook,
     eyebrow: "DEVELOPER PLATFORM",
+    summaryName: "a first-class developer platform",
     title: "Build on top of your approval record.",
     lede:
       "A read-access REST API exposes your payment vouchers, purchase orders, users, vendors, budgets, accounting codes, journal entries, audit events and spending summaries, with webhooks for each step of a payment or order, changes to people and suppliers, and every entry in your audit trail. Each API key permission opens exactly the endpoints it names, and long lists come back a page at a time.",
     planFeature: "apiAccess",
+    claims: ["apiAccess"],
     integrations: [
       { name: "REST API (v1)", summary: "Read access to vouchers, orders, users, vendors, budgets, journal entries, audit events and spending summaries." },
       { name: "Webhooks", summary: "Per-tenant event subscriptions with retries, signed to the Standard Webhooks scheme." },
@@ -254,10 +299,22 @@ function CategoryBlock({ category, index, planNote }: { category: Category; inde
 export function IntegrationsCataloguePage({
   featurePlans,
   allPlanNames,
+  verifiedClaims,
 }: {
   featurePlans: FeaturePlans;
   allPlanNames: string[];
+  /** Claim keys with a production sign-off (`@/lib/verified-claims`). */
+  verifiedClaims: readonly string[];
 }) {
+  const categories = signedOffCategories(verifiedClaims);
+  const showDeveloperEvents = verifiedClaims.includes("apiAccess");
+  // The summary names only the signed-off sections; with none, it promises nothing.
+  const firstSection = categories[0];
+  const summaryNames = categories.map((category) => category.summaryName);
+  const summaryLine =
+    summaryNames.length > 0
+      ? `${capitalise(formatEnglishList(summaryNames))}. Everything listed here is available today.`
+      : "Tell us which tools you run, and we will tell you plainly how they connect today.";
 
   return (
     <>
@@ -292,13 +349,7 @@ export function IntegrationsCataloguePage({
               margin: "0 0 24px",
             }}
             titleClassName="lg:!text-display-4xl"
-            lede={
-              <>
-                Identity, provisioning, notifications, accounting, banking, and a
-                first-class developer platform. Everything listed here is available
-                today.
-              </>
-            }
+            lede={summaryLine}
             ledeStyle={{
               fontSize: "var(--text-2xl)",
               color: "var(--color-text-subtle)",
@@ -311,17 +362,21 @@ export function IntegrationsCataloguePage({
             {...fadeUpOnLoad(3)}
             style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}
           >
-            <ButtonLink
-              href="#identity"
-              size="md"
-            >
-              Explore the catalogue
-            </ButtonLink>
+            {firstSection ? (
+              <ButtonLink href={`#${firstSection.id}`} size="md">
+                Explore the catalogue
+              </ButtonLink>
+            ) : (
+              <ButtonLink href={contactHref()} size="md">
+                Talk to us
+              </ButtonLink>
+            )}
           </m.div>
         </div>
       </section>
 
       {/* ── CATEGORY NAV ───────────────────────────────────── */}
+      {categories.length > 0 && (
       <section style={{ backgroundColor: "var(--color-white)", padding: "40px 40px", borderBottom: "1px solid var(--color-border)", position: "relative", overflow: "hidden", isolation: "isolate" }}>
         <div
           style={{
@@ -345,7 +400,7 @@ export function IntegrationsCataloguePage({
           >
             Jump to:
           </span>
-          {CATEGORIES.map((c) => (
+          {categories.map((c) => (
             <Link
               key={c.id}
               href={`#${c.id}`}
@@ -364,11 +419,13 @@ export function IntegrationsCataloguePage({
           ))}
         </div>
       </section>
+      )}
 
       {/* ── CATEGORIES ─────────────────────────────────────── */}
+      {categories.length > 0 && (
       <section style={{ backgroundColor: "var(--color-bg-light)", padding: "100px 40px", position: "relative", overflow: "hidden", isolation: "isolate" }}>
         <div style={{ maxWidth: "var(--layout-max-width)", margin: "0 auto", display: "flex", flexDirection: "column", gap: "88px" }}>
-          {CATEGORIES.map((c, i) => (
+          {categories.map((c, i) => (
             <CategoryBlock
               key={c.id}
               category={c}
@@ -378,8 +435,10 @@ export function IntegrationsCataloguePage({
           ))}
         </div>
       </section>
+      )}
 
       {/* ── DEV TEASER ─────────────────────────────────────── */}
+      {showDeveloperEvents && (
       <section style={{ backgroundColor: "var(--color-white)", padding: "100px 40px", position: "relative", overflow: "hidden", isolation: "isolate" }}>
         <div style={{ maxWidth: "var(--layout-max-width)", margin: "0 auto" }}>
           <div style={{ display: "grid", gap: "48px", alignItems: "center" }} className="grid-cols-1 lg:grid-cols-2">
@@ -472,6 +531,7 @@ export function IntegrationsCataloguePage({
           </div>
         </div>
       </section>
+      )}
 
       </main>
       <Footer />

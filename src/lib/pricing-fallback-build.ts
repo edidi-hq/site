@@ -160,7 +160,7 @@ function buildPlan(plan: PlanKey): Plan {
     key: plan,
     name: entry.name,
     description: PLAN_COPY[plan].description(copyInput),
-    highlights: PLAN_COPY[plan].highlights(copyInput),
+    ...fallbackHighlights(PLAN_COPY[plan].highlights(copyInput)),
     selfServeCheckout: isSelfServePlan(plan),
     serviceCommitments: [...entry.serviceCommitments],
     pricing: priceEntries(plan),
@@ -269,6 +269,11 @@ function buildPricingFallback(): PricingData {
 }
 
 /** The file's exact text: two-space JSON plus a trailing newline. */
+/** The bullets, and beside them the claims each makes — the API's shape. */
+function fallbackHighlights(items: ReturnType<(typeof PLAN_COPY)[PlanKey]["highlights"]>) {
+  return { highlights: items.map((item) => item.text), highlightClaims: items.map((item) => [...item.claims]) };
+}
+
 export function serialisePricingFallback(): string {
   return `${JSON.stringify(buildPricingFallback(), null, 2)}\n`;
 }

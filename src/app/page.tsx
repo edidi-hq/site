@@ -9,6 +9,7 @@ import { FeaturesGrid } from "@/components/sections/features-grid";
 import { Pricing } from "@/components/sections/pricing";
 import { CtaBanner } from "@/components/sections/cta-banner";
 import { fetchPricingData } from "@/lib/pricing";
+import { advertisedModuleKeys } from "@/lib/verified-claims";
 import { JsonLd, softwareApplicationSchema } from "@/lib/seo";
 
 // Title/description/OpenGraph are inherited from the root layout (the home
@@ -25,11 +26,11 @@ export default async function Home() {
       <JsonLd data={softwareApplicationSchema(pricingData)} />
       <Navbar />
       <main id="main">
-        <Hero />
+        <Hero multiCompanySignedOff={(pricingData.verifiedClaims ?? []).includes("multiCompanyGroup")} />
         <Problem />
         <HowItWorks />
         <SocialProof />
-        <FeaturesGrid />
+        <FeaturesGrid moduleKeys={advertisedModuleKeys(pricingData)} />
         <Pricing data={pricingData} />
         <CtaBanner />
       </main>

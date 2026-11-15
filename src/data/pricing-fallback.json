@@ -11,6 +11,19 @@
         "WhatsApp & email alerts",
         "10 GiB storage · 7-year record retention"
       ],
+      "highlightClaims": [
+        [],
+        [],
+        [
+          "pdfExport",
+          "csvExport",
+          "bankExport"
+        ],
+        [
+          "approvalChain"
+        ],
+        []
+      ],
       "selfServeCheckout": true,
       "serviceCommitments": [],
       "pricing": [
@@ -107,6 +120,29 @@
         "Analytics, recurring templates, delegation",
         "100 GiB storage · 7-year record retention",
         "Priority support"
+      ],
+      "highlightClaims": [
+        [],
+        [
+          "fullAuditTrail"
+        ],
+        [
+          "guard"
+        ],
+        [
+          "grants"
+        ],
+        [
+          "customApprovalChains",
+          "customBranding"
+        ],
+        [
+          "analytics",
+          "recurringTemplates",
+          "delegation"
+        ],
+        [],
+        []
       ],
       "selfServeCheckout": true,
       "serviceCommitments": [
@@ -225,6 +261,25 @@
         "Single sign-on (SSO/SCIM) & advanced approvals",
         "API access for custom integrations",
         "Dedicated onboarding & priority support"
+      ],
+      "highlightClaims": [
+        [],
+        [
+          "multiCompanyGroup",
+          "groupAdminDashboard"
+        ],
+        [],
+        [
+          "people"
+        ],
+        [
+          "sso",
+          "advancedApprovalWorkflows"
+        ],
+        [
+          "apiAccess"
+        ],
+        []
       ],
       "selfServeCheckout": false,
       "serviceCommitments": [

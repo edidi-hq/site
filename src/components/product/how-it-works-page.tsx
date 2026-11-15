@@ -130,7 +130,7 @@ const COMPARISON = [
   },
   {
     old: "Printed paper voucher signed in pen, scanned, emailed, filed somewhere.",
-    withPlatform: "Digital signature attached at sanction. Bank-ready PDF and audit trail generated instantly.",
+    withPlatform: "Digital signature attached at sanction. Bank-ready PDF and audit trail produced in the same step.",
   },
   {
     old: "\"Who approved this?\" requires an archaeology expedition through 6 months of email.",
